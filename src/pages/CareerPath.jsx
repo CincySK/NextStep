@@ -52,12 +52,15 @@ export default function CareerPath() {
   }
 
   return (
-    <section className="section-card career-theme">
+    <section className="section-card module-card">
       <div className="section-header">
-        <h2>Career Path Quiz</h2>
+        <div>
+          <h2>Career Path Module</h2>
+          <p className="intro-copy">Answer each prompt, then review your recommended career direction.</p>
+        </div>
         <div className="badge-row">
-          <ProgressBadge label="Answered" value={`${answeredCount}/${careerQuiz.length}`} tone="career" />
-          <ProgressBadge label="Current Result" value={scoreLabel} tone="career" />
+          <ProgressBadge label="Answered" value={`${answeredCount}/${careerQuiz.length}`} tone="default" />
+          <ProgressBadge label="Current Result" value={scoreLabel} tone="default" />
         </div>
       </div>
 
@@ -71,12 +74,12 @@ export default function CareerPath() {
         />
       ))}
 
-      <button className="primary-btn career-btn" disabled={!canSubmit} onClick={finishQuiz}>
+      <button className="primary-btn" disabled={!canSubmit} onClick={finishQuiz}>
         See My Career Match
       </button>
 
       {result && (
-        <article className="result-card career-theme-sub">
+        <article className="result-card">
           <h3>{result.title}</h3>
           <p>{result.blurb}</p>
           <p className="mini-label">Recommended Careers</p>

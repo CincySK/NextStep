@@ -46,12 +46,15 @@ export default function CollegeMatch() {
   }
 
   return (
-    <section className="section-card college-theme">
+    <section className="section-card module-card">
       <div className="section-header">
-        <h2>College Match Quiz</h2>
+        <div>
+          <h2>College Match Module</h2>
+          <p className="intro-copy">Discover the campus style that fits how you learn and grow.</p>
+        </div>
         <div className="badge-row">
-          <ProgressBadge label="Answered" value={`${Object.keys(answers).length}/${collegeQuiz.length}`} tone="college" />
-          <ProgressBadge label="Match Type" value={matchType} tone="college" />
+          <ProgressBadge label="Answered" value={`${Object.keys(answers).length}/${collegeQuiz.length}`} tone="default" />
+          <ProgressBadge label="Match Type" value={matchType} tone="default" />
         </div>
       </div>
 
@@ -65,12 +68,12 @@ export default function CollegeMatch() {
         />
       ))}
 
-      <button className="primary-btn college-btn" disabled={!canSubmit} onClick={calculateMatch}>
+      <button className="primary-btn" disabled={!canSubmit} onClick={calculateMatch}>
         Show My College Matches
       </button>
 
       {matches.length > 0 && (
-        <div className="result-card college-theme-sub">
+        <div className="result-card">
           <h3>Sample College Recommendations</h3>
           <div className="recommend-grid">
             {matches.map((college) => (

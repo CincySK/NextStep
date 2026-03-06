@@ -96,14 +96,3 @@ export const collegeLookFor = [
   "Teacher recommendations",
   "Evidence of resilience and growth"
 ];
-
-export const budgetDefaults = {
-  monthlyIncome: 1200,
-  expenses: [
-    { name: "Food", value: 250 },
-    { name: "Transport", value: 120 },
-    { name: "Phone", value: 60 },
-    { name: "Entertainment", value: 150 },
-    { name: "Savings", value: 200 }
-  ]
-};

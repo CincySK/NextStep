@@ -16,12 +16,13 @@ export default function Home() {
 
   return (
     <>
-      <section className="hero">
+      <section className="hero card">
         <div>
-          <p className="hero-kicker">Future Planning Toolkit</p>
-          <h1>Find Your Future</h1>
+          <p className="hero-kicker">Student Planning Platform</p>
+          <h1>Welcome to NextStep</h1>
           <p>
-            Explore career directions, discover matching colleges, and build money confidence through guided activities.
+            Build clarity one lesson at a time. NextStep helps you explore careers, compare college environments, and
+            practice real-world money decisions with guided feedback.
           </p>
           <div className="badge-row">
             <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} tone="default" />
@@ -29,31 +30,31 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-panel">
-          <h3>Today&apos;s Goal</h3>
-          <p>Complete one quiz and save at least one favorite result to your dashboard.</p>
+          <h3>Today&apos;s Next Step</h3>
+          <p>Finish one learning module and save one insight to your dashboard learning hub.</p>
         </div>
       </section>
 
       <section className="feature-grid">
         <FeatureCard
           title="Career Path"
-          description="Take a short quiz and match with realistic career clusters."
+          description="Take a short strengths quiz and identify career clusters that match your interests."
+          supportText="Get role ideas, then save careers you want to research next."
           to="/career"
-          tone="career"
           onNavigate={navigate}
         />
         <FeatureCard
           title="College Match"
-          description="Answer preference questions and review sample college fits."
+          description="Answer campus and learning-style questions to discover sample college fits."
+          supportText="Use your results to build a focused college research list."
           to="/college"
-          tone="college"
           onNavigate={navigate}
         />
         <FeatureCard
           title="Money Skills"
-          description="Play with your monthly budget and track your remaining balance live."
+          description="Practice core financial literacy with short interactive exercises and feedback."
+          supportText="Learn budgeting, savings, and credit basics in student-friendly lessons."
           to="/money"
-          tone="money"
           onNavigate={navigate}
         />
       </section>

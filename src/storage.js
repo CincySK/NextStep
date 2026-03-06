@@ -1,4 +1,5 @@
-const KEY = "fyf-data-v1";
+const KEY = "nextstep-data-v1";
+const LEGACY_KEY = "fyf-data-v1";
 
 const defaultState = {
   progress: {
@@ -17,7 +18,7 @@ const defaultState = {
 
 export function loadAppData() {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY);
     if (!raw) return defaultState;
     return { ...defaultState, ...JSON.parse(raw) };
   } catch {

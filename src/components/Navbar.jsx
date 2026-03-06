@@ -12,7 +12,10 @@ export default function Navbar() {
   return (
     <header className="top-nav-wrap">
       <nav className="top-nav container">
-        <div className="brand">Find Your Future</div>
+        <div className="brand-wrap">
+          <div className="brand">NextStep</div>
+          <p className="brand-subtitle">Future Planning for Students</p>
+        </div>
         <div className="nav-links">
           {links.map((link) => (
             <NavLink

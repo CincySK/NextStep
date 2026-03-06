@@ -19,9 +19,12 @@ export default function Dashboard() {
   }
 
   return (
-    <section className="section-card">
+    <section className="section-card module-card">
       <div className="section-header">
-        <h2>Dashboard</h2>
+        <div>
+          <h2>Learning Hub</h2>
+          <p className="intro-copy">Track your module progress and keep the options you want to revisit.</p>
+        </div>
         <div className="badge-row">
           <ProgressBadge label="Completed" value={`${completedCount}/3`} />
           <ProgressBadge label="Favorites" value={data.favorites.length} />
@@ -30,7 +33,7 @@ export default function Dashboard() {
 
       <div className="dashboard-grid">
         <article className="mini-card">
-          <h3>Progress</h3>
+          <h3>Module Progress</h3>
           <ul className="list-clean">
             <li>Career Path: {data.progress.careerComplete ? "Done" : "Pending"}</li>
             <li>College Match: {data.progress.collegeComplete ? "Done" : "Pending"}</li>
@@ -39,7 +42,7 @@ export default function Dashboard() {
         </article>
 
         <article className="mini-card">
-          <h3>Latest Results</h3>
+          <h3>Latest Outcomes</h3>
           <ul className="list-clean">
             <li>Career: {data.scores.career ?? "-"}</li>
             <li>College: {data.scores.college ?? "-"}</li>
@@ -48,9 +51,9 @@ export default function Dashboard() {
         </article>
 
         <article className="mini-card">
-          <h3>Saved Favorites</h3>
+          <h3>Saved Ideas</h3>
           {data.favorites.length === 0 ? (
-            <p>No favorites yet. Save one from Career Path or College Match.</p>
+            <p>No saved items yet. Add careers or colleges from your module results.</p>
           ) : (
             <ul className="list-clean">
               {data.favorites.map((fav) => (
