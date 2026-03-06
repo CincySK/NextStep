@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import CareerPath from "./pages/CareerPath";
@@ -17,6 +17,7 @@ export default function App() {
           <Route path="/college" element={<CollegeMatch />} />
           <Route path="/money" element={<MoneySkills />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </div>
