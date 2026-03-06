@@ -12,6 +12,7 @@ export default function App() {
       <Navbar />
       <main className="container page-wrap">
         <Routes>
+          <Route path="" element={<Home />} />
           <Route path="/" element={<Home />} />
           <Route path="/career" element={<CareerPath />} />
           <Route path="/college" element={<CollegeMatch />} />
