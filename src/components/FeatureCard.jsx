@@ -3,7 +3,7 @@ export default function FeatureCard({ title, description, to, tone, onNavigate }
     <button className={`feature-card ${tone}`} onClick={() => onNavigate(to)}>
       <h3>{title}</h3>
       <p>{description}</p>
-      <span className="feature-link">Explore -></span>
+      <span className="feature-link">Explore -&gt;</span>
     </button>
   );
 }
