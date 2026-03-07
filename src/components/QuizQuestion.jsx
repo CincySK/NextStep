@@ -1,7 +1,7 @@
 export default function QuizQuestion({ prompt, options, selected, onSelect }) {
   return (
     <section className="quiz-block">
-      <h3>{prompt}</h3>
+      <h3 className="quiz-prompt">{prompt}</h3>
       <div className="option-grid">
         {options.map((option) => (
           <button

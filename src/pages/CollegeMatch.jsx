@@ -4,6 +4,15 @@ import ProgressBadge from "../components/ProgressBadge";
 import { collegeLookFor, collegeMatches, collegeQuiz } from "../data";
 import { updateAppData } from "../storage";
 
+const admissionsNotes = {
+  "Strong GPA trend in core classes": "Colleges value consistency and improvement over time.",
+  "Clear extracurricular commitment": "Depth in a few activities is often stronger than doing everything.",
+  "Leadership or initiative": "Starting or improving something shows ownership and maturity.",
+  "Compelling personal statement": "Authentic reflection helps admissions understand your perspective.",
+  "Teacher recommendations": "Strong recommendations highlight character and classroom impact.",
+  "Evidence of resilience and growth": "Growth through challenges can strengthen your application story."
+};
+
 export default function CollegeMatch() {
   const [answers, setAnswers] = useState({});
   const [matches, setMatches] = useState([]);
@@ -94,7 +103,8 @@ export default function CollegeMatch() {
         <div className="look-grid">
           {collegeLookFor.map((item) => (
             <div className="look-card" key={item}>
-              {item}
+              <h4>{item}</h4>
+              <p>{admissionsNotes[item]}</p>
             </div>
           ))}
         </div>
