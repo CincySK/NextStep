@@ -6,16 +6,16 @@ import { getResumeMeta, isResumableSession } from "../quiz/progressUtils";
 
 const highlights = [
   {
-    title: "Match strengths to career paths",
-    text: "Discover career areas aligned with how you think, solve problems, and collaborate."
+    title: "Step 1: Understand your interests and values",
+    text: "Start with an interest-survey style flow to identify what matters to you in work and lifestyle."
   },
   {
-    title: "Connect interests to majors",
-    text: "See how your answers map to practical major options you can explore next."
+    title: "Step 2: Explore realistic career matches",
+    text: "Get career matches grounded in your answers, with transparent fit explanations."
   },
   {
-    title: "Get a personalized roadmap",
-    text: "Receive a narrative summary with concrete next steps for your next semester."
+    title: "Step 3: Research and plan next moves",
+    text: "Review work environment, salary notes, outlook, education path, and concrete next actions."
   }
 ];
 
@@ -23,9 +23,12 @@ export default function CareerPath() {
   const navigate = useNavigate();
   const savedSession = loadQuizSession("career");
 
-  const canResume = useMemo(() => isResumableSession(savedSession), [savedSession]);
+  const canResume = useMemo(
+    () => savedSession?.version === 2 && isResumableSession(savedSession),
+    [savedSession]
+  );
   const resumeMeta = useMemo(
-    () => getResumeMeta(savedSession, getEstimatedSteps("career")),
+    () => getResumeMeta(savedSession, savedSession?.questionOrder?.length ?? getEstimatedSteps("career")),
     [savedSession]
   );
 
@@ -35,8 +38,8 @@ export default function CareerPath() {
         <div>
           <h2>Career Path</h2>
           <p className="intro-copy">
-            Take a guided adaptive quiz that adjusts follow-up questions based on your answers and builds a clearer
-            career direction.
+            This guided career exploration process helps you identify fit, research options, and set practical next
+            steps you can revisit as your goals evolve.
           </p>
         </div>
       </div>

@@ -78,7 +78,7 @@ export default function Dashboard() {
           {data.quizResults?.career && (
             <article className="mini-card">
               <h3>Career Quiz Snapshot</h3>
-              <p>{data.quizResults.career.whyItFits}</p>
+              <p>{data.quizResults.career.narrative ?? data.quizResults.career.whyItFits}</p>
               <p className="mini-label">Updated: {formatTimestamp(data.quizResults.career.completedAt)}</p>
             </article>
           )}
@@ -90,6 +90,19 @@ export default function Dashboard() {
             </article>
           )}
         </div>
+      )}
+
+      {data.quizResults?.careerHistory?.length > 0 && (
+        <section className="result-card">
+          <h3>Career Exploration History</h3>
+          <ul className="list-clean">
+            {data.quizResults.careerHistory.map((item) => (
+              <li key={item.createdAt}>
+                {formatTimestamp(item.createdAt)}: Top themes around <strong>{item.topDomain}</strong> with paths like {item.topCareerTitles.slice(0, 2).join(", ")}.
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </section>
   );

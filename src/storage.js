@@ -20,7 +20,8 @@ const defaultState = {
   },
   quizResults: {
     career: null,
-    college: null
+    college: null,
+    careerHistory: []
   }
 };
 
