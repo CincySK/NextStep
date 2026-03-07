@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
+import OnboardingContainer from "./components/onboarding/OnboardingContainer";
+import { isOnboardingComplete, resetOnboarding } from "./onboarding/onboardingStorage";
 import Home from "./pages/Home";
 import CareerPath from "./pages/CareerPath";
 import CareerQuiz from "./pages/CareerQuiz";
@@ -12,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   const location = useLocation();
+  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingComplete());
 
   useEffect(() => {
     const titles = {
@@ -26,6 +29,15 @@ export default function App() {
     document.title = titles[location.pathname] ?? "NextStep | Student Future Planning";
   }, [location.pathname]);
 
+  function handleOnboardingComplete() {
+    setShowOnboarding(false);
+  }
+
+  function handleRestartOnboarding() {
+    resetOnboarding();
+    setShowOnboarding(true);
+  }
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -37,11 +49,12 @@ export default function App() {
           <Route path="/college" element={<CollegeMatch />} />
           <Route path="/college/quiz" element={<CollegeQuiz />} />
           <Route path="/money" element={<MoneySkills />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard onRestartOnboarding={handleRestartOnboarding} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <Footer />
+      {showOnboarding && <OnboardingContainer onComplete={handleOnboardingComplete} />}
     </div>
   );
 }

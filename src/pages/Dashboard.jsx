@@ -1,9 +1,28 @@
 import { useMemo, useState } from "react";
 import ProgressBadge from "../components/ProgressBadge";
 import { loadAppData, updateAppData } from "../storage";
+import { loadOnboardingData } from "../onboarding/onboardingStorage";
 
-export default function Dashboard() {
+function getOnboardingSuggestions(profile) {
+  if (!profile) return [];
+  const suggestions = [];
+  const helpSet = new Set(profile.helpAreas ?? []);
+
+  if (helpSet.has("all") || helpSet.has("careers")) suggestions.push("Try the Career Path quiz and save two roles to compare.");
+  if (helpSet.has("all") || helpSet.has("colleges")) suggestions.push("Complete College Match and shortlist 3 schools to research.");
+  if (helpSet.has("all") || helpSet.has("money")) suggestions.push("Finish one Money Skills activity and track your progress.");
+  if (profile.learningGoals === "majors") suggestions.push("Use your career results to compare majors tied to top matches.");
+  if ((profile.interests ?? []).length > 0) {
+    suggestions.push(`Explore career paths connected to: ${(profile.interests ?? []).slice(0, 3).join(", ")}.`);
+  }
+
+  return suggestions.slice(0, 4);
+}
+
+export default function Dashboard({ onRestartOnboarding }) {
   const [data, setData] = useState(loadAppData());
+  const onboardingProfile = loadOnboardingData();
+  const suggestions = useMemo(() => getOnboardingSuggestions(onboardingProfile), [onboardingProfile]);
 
   const completedCount = useMemo(
     () => Object.values(data.progress).filter(Boolean).length,
@@ -36,6 +55,23 @@ export default function Dashboard() {
           <ProgressBadge label="Favorites" value={data.favorites.length} />
         </div>
       </div>
+
+      <div className="cta-row">
+        <button className="secondary-btn" onClick={onRestartOnboarding}>
+          Restart Onboarding
+        </button>
+      </div>
+
+      {suggestions.length > 0 && (
+        <section className="result-card">
+          <h3>Personalized Suggestions</h3>
+          <ul className="list-clean">
+            {suggestions.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <div className="dashboard-grid">
         <article className="mini-card">
