@@ -6,6 +6,7 @@ import { careerBaseQuestions, getDefaultCareerFollowUp } from "../quiz/career/ca
 import { analyzeCareerAnswerHistory, scoreCareerMatches, validateCareerRecommendations } from "../quiz/career/careerScoring";
 import { buildCareerResultsSummary } from "../quiz/career/careerResultsBuilder";
 import { generateCareerFollowUpQuestion } from "../services/aiCareerService";
+import { finalizeFirstQuizPersonalization } from "../personalization/profileLifecycle";
 import { loadQuizSession, saveQuizSession, updateAppData } from "../storage";
 
 const CAREER_SESSION_VERSION = 2;
@@ -197,6 +198,12 @@ export default function CareerQuiz() {
           careerHistory: [snapshot, ...previous].slice(0, 10)
         }
       };
+    });
+
+    finalizeFirstQuizPersonalization({
+      quizType: "career",
+      answers: nextSession.answers,
+      result: report
     });
   }
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import ProgressBadge from "../components/ProgressBadge";
+import { finalizeFirstQuizPersonalization } from "../personalization/profileLifecycle";
 import { updateAppData } from "../storage";
 
 const sortingItems = [
@@ -39,12 +40,57 @@ export default function MoneySkills() {
   const completedCount = Object.values(completed).filter(Boolean).length;
 
   useEffect(() => {
+    const completedActivities = Object.entries(completed)
+      .filter(([, done]) => done)
+      .map(([key]) => key);
+    const confidenceLevel = completedCount >= 3 ? "growing_confident" : "building_foundation";
+    const moneyResult = {
+      title: "Money Skills Progress",
+      completedActivities: completedCount,
+      confidenceLevel,
+      focusAreas: completedActivities,
+      whyItFits: completedCount >= 3
+        ? "You are building reliable habits across spending, saving, and credit basics."
+        : "You are building foundational confidence with practical money decisions."
+    };
+
     updateAppData((current) => ({
       ...current,
       progress: { ...current.progress, moneyComplete: completedCount >= 3 },
-      scores: { ...current.scores, money: `${completedCount}/4 activities complete` }
+      scores: { ...current.scores, money: `${completedCount}/4 activities complete` },
+      quizResults: {
+        ...current.quizResults,
+        money: {
+          ...moneyResult,
+          completedAt: new Date().toISOString()
+        }
+      }
     }));
-  }, [completedCount]);
+
+    if (completedCount >= 3) {
+      finalizeFirstQuizPersonalization({
+        quizType: "money",
+        answers: {
+          spendingChoice,
+          sortingAnswers,
+          goalAmount,
+          goalWeeks,
+          weeklySave,
+          creditChoice
+        },
+        result: moneyResult
+      });
+    }
+  }, [
+    completed,
+    completedCount,
+    creditChoice,
+    goalAmount,
+    goalWeeks,
+    sortingAnswers,
+    spendingChoice,
+    weeklySave
+  ]);
 
   function checkSpending(choice) {
     setSpendingChoice(choice);

@@ -1,10 +1,12 @@
-export default function OnboardingCardOption({ label, selected, onClick }) {
+export default function OnboardingCardOption({ label, description, selected, onClick }) {
   return (
     <button
+      type="button"
       className={`onboarding-option ${selected ? "onboarding-option-selected" : ""}`}
       onClick={onClick}
     >
-      {label}
+      <span>{label}</span>
+      {description && <small>{description}</small>}
     </button>
   );
 }

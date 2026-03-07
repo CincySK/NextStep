@@ -12,6 +12,7 @@ import {
   getNextQuestionId,
   getQuestion
 } from "../../quiz/quizEngine";
+import { finalizeFirstQuizPersonalization } from "../../personalization/profileLifecycle";
 import { clearQuizSession, loadQuizSession, saveQuizSession, updateAppData } from "../../storage";
 import { getResumeMeta } from "../../quiz/progressUtils";
 
@@ -128,6 +129,12 @@ export default function QuizFlowPage({ type }) {
         }
       }
     }));
+
+    finalizeFirstQuizPersonalization({
+      quizType: type,
+      answers: session.answers,
+      result
+    });
 
     persist({
       ...session,

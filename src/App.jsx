@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import OnboardingContainer from "./components/onboarding/OnboardingContainer";
-import { isOnboardingComplete, resetOnboarding } from "./onboarding/onboardingStorage";
+import { isOnboardingComplete, loadOnboardingState, resetOnboarding } from "./onboarding/onboardingStorage";
+import { clearPersonalizationProfile } from "./personalization/personalizationStorage";
 import Home from "./pages/Home";
 import CareerPath from "./pages/CareerPath";
 import CareerQuiz from "./pages/CareerQuiz";
@@ -14,7 +15,12 @@ import Dashboard from "./pages/Dashboard";
 
 export default function App() {
   const location = useLocation();
-  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboardingComplete());
+  const navigate = useNavigate();
+  const [showOnboarding, setShowOnboarding] = useState(() => {
+    const complete = isOnboardingComplete();
+    const state = loadOnboardingState();
+    return !complete && !state?.primaryPath;
+  });
 
   useEffect(() => {
     const titles = {
@@ -29,13 +35,29 @@ export default function App() {
     document.title = titles[location.pathname] ?? "NextStep | Student Future Planning";
   }, [location.pathname]);
 
-  function handleOnboardingComplete() {
+  useEffect(() => {
+    const state = loadOnboardingState();
+    if (isOnboardingComplete()) return;
+    if (!state?.primaryPath) return;
+    if (location.pathname !== "/") return;
+    const target = state.primaryPath === "career"
+      ? "/career/quiz"
+      : state.primaryPath === "college"
+        ? "/college/quiz"
+        : "/money";
+    navigate(target);
+  }, [location.pathname, navigate]);
+
+  function handleOnboardingComplete(payload) {
     setShowOnboarding(false);
+    if (payload?.targetRoute) navigate(payload.targetRoute);
   }
 
   function handleRestartOnboarding() {
     resetOnboarding();
+    clearPersonalizationProfile();
     setShowOnboarding(true);
+    navigate("/");
   }
 
   return (
