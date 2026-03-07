@@ -18,6 +18,12 @@ export default function Dashboard() {
     setData(next);
   }
 
+  function formatTimestamp(value) {
+    if (!value) return "Not available";
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? "Not available" : parsed.toLocaleString();
+  }
+
   return (
     <section className="section-card module-card">
       <div className="section-header">
@@ -66,6 +72,25 @@ export default function Dashboard() {
           )}
         </article>
       </div>
+
+      {(data.quizResults?.career || data.quizResults?.college) && (
+        <div className="dashboard-grid">
+          {data.quizResults?.career && (
+            <article className="mini-card">
+              <h3>Career Quiz Snapshot</h3>
+              <p>{data.quizResults.career.whyItFits}</p>
+              <p className="mini-label">Updated: {formatTimestamp(data.quizResults.career.completedAt)}</p>
+            </article>
+          )}
+          {data.quizResults?.college && (
+            <article className="mini-card">
+              <h3>College Quiz Snapshot</h3>
+              <p>{data.quizResults.college.whyItFits}</p>
+              <p className="mini-label">Updated: {formatTimestamp(data.quizResults.college.completedAt)}</p>
+            </article>
+          )}
+        </div>
+      )}
     </section>
   );
 }

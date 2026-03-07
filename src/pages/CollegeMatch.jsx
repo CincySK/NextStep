@@ -1,114 +1,78 @@
-import { useState } from "react";
-import QuizQuestion from "../components/QuizQuestion";
-import ProgressBadge from "../components/ProgressBadge";
-import { collegeLookFor, collegeMatches, collegeQuiz } from "../data";
-import { updateAppData } from "../storage";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { loadQuizSession } from "../storage";
+import { getEstimatedSteps } from "../quiz/quizEngine";
+import { getResumeMeta, isResumableSession } from "../quiz/progressUtils";
 
-const admissionsNotes = {
-  "Strong GPA trend in core classes": "Colleges value consistency and improvement over time.",
-  "Clear extracurricular commitment": "Depth in a few activities is often stronger than doing everything.",
-  "Leadership or initiative": "Starting or improving something shows ownership and maturity.",
-  "Compelling personal statement": "Authentic reflection helps admissions understand your perspective.",
-  "Teacher recommendations": "Strong recommendations highlight character and classroom impact.",
-  "Evidence of resilience and growth": "Growth through challenges can strengthen your application story."
-};
+const factors = [
+  {
+    title: "School size",
+    text: "Find your fit between close-knit campuses and larger university ecosystems."
+  },
+  {
+    title: "Campus vibe",
+    text: "Balance social energy, community culture, and day-to-day student life."
+  },
+  {
+    title: "Academic priorities",
+    text: "Focus on affordability, mentorship, research, or career outcomes."
+  },
+  {
+    title: "Support systems",
+    text: "Compare advising, wellness, and first-year transition support."
+  },
+  {
+    title: "Location preferences",
+    text: "Choose environments where you can thrive academically and personally."
+  }
+];
 
 export default function CollegeMatch() {
-  const [answers, setAnswers] = useState({});
-  const [matches, setMatches] = useState([]);
-  const [matchType, setMatchType] = useState("Not scored");
+  const navigate = useNavigate();
+  const savedSession = loadQuizSession("college");
 
-  const canSubmit = Object.keys(answers).length === collegeQuiz.length;
-
-  function handleAnswer(index, label) {
-    setAnswers((prev) => ({ ...prev, [index]: label }));
-  }
-
-  function calculateMatch() {
-    const tally = { Urban: 0, Balanced: 0, Classic: 0 };
-
-    collegeQuiz.forEach((q, idx) => {
-      const selected = q.options.find((opt) => opt.label === answers[idx]);
-      if (selected) tally[selected.type] += 1;
-    });
-
-    const winner = Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
-    setMatchType(winner);
-    setMatches(collegeMatches[winner]);
-
-    updateAppData((current) => ({
-      ...current,
-      progress: { ...current.progress, collegeComplete: true },
-      scores: { ...current.scores, college: `${winner} learner` }
-    }));
-  }
-
-  function saveFavoriteCollege(name) {
-    updateAppData((current) => {
-      const exists = current.favorites.some((f) => f.type === "college" && f.name === name);
-      if (exists) return current;
-      return {
-        ...current,
-        favorites: [...current.favorites, { type: "college", name }]
-      };
-    });
-  }
+  const canResume = useMemo(() => isResumableSession(savedSession), [savedSession]);
+  const resumeMeta = useMemo(
+    () => getResumeMeta(savedSession, getEstimatedSteps("college")),
+    [savedSession]
+  );
 
   return (
     <section className="section-card module-card">
       <div className="section-header">
         <div>
-          <h2>College Match Module</h2>
-          <p className="intro-copy">Discover the campus style that fits how you learn and grow.</p>
-        </div>
-        <div className="badge-row">
-          <ProgressBadge label="Answered" value={`${Object.keys(answers).length}/${collegeQuiz.length}`} tone="default" />
-          <ProgressBadge label="Match Type" value={matchType} tone="default" />
+          <h2>College Match</h2>
+          <p className="intro-copy">
+            Start a guided quiz experience that adapts to your preferences and generates a personalized college-fit
+            profile with next research steps.
+          </p>
         </div>
       </div>
 
-      {collegeQuiz.map((question, idx) => (
-        <QuizQuestion
-          key={question.prompt}
-          prompt={question.prompt}
-          options={question.options}
-          selected={answers[idx]}
-          onSelect={(value) => handleAnswer(idx, value)}
-        />
-      ))}
+      <div className="look-grid">
+        {factors.map((item) => (
+          <article key={item.title} className="look-card">
+            <h4>{item.title}</h4>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
 
-      <button className="primary-btn" disabled={!canSubmit} onClick={calculateMatch}>
-        Show My College Matches
-      </button>
-
-      {matches.length > 0 && (
-        <div className="result-card">
-          <h3>Sample College Recommendations</h3>
-          <div className="recommend-grid">
-            {matches.map((college) => (
-              <article key={college.name} className="mini-card">
-                <h4>{college.name}</h4>
-                <p>{college.reason}</p>
-                <button className="chip" onClick={() => saveFavoriteCollege(college.name)}>
-                  + Favorite
-                </button>
-              </article>
-            ))}
-          </div>
-        </div>
+      <div className="cta-row">
+        <button className="primary-btn" onClick={() => navigate("/college/quiz")}>
+          Start College Match Quiz
+        </button>
+        {canResume && (
+          <button className="secondary-btn" onClick={() => navigate("/college/quiz")}>
+            Resume Quiz ({resumeMeta.currentStep}/{resumeMeta.totalSteps})
+          </button>
+        )}
+      </div>
+      {canResume && (
+        <p className="quiz-meta">
+          Progress saved at step {resumeMeta.currentStep} of {resumeMeta.totalSteps} ({resumeMeta.percent}% complete). Last updated {resumeMeta.updatedAtText}.
+        </p>
       )}
-
-      <article className="look-for-block">
-        <h3>What Colleges Look For</h3>
-        <div className="look-grid">
-          {collegeLookFor.map((item) => (
-            <div className="look-card" key={item}>
-              <h4>{item}</h4>
-              <p>{admissionsNotes[item]}</p>
-            </div>
-          ))}
-        </div>
-      </article>
     </section>
   );
 }

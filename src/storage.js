@@ -13,7 +13,15 @@ const defaultState = {
     college: null,
     money: null
   },
-  budget: null
+  budget: null,
+  quizSessions: {
+    career: null,
+    college: null
+  },
+  quizResults: {
+    career: null,
+    college: null
+  }
 };
 
 export function loadAppData() {
@@ -35,4 +43,28 @@ export function updateAppData(updater) {
   const next = updater(current);
   saveAppData(next);
   return next;
+}
+
+export function loadQuizSession(type) {
+  return loadAppData().quizSessions?.[type] ?? null;
+}
+
+export function saveQuizSession(type, session) {
+  return updateAppData((current) => ({
+    ...current,
+    quizSessions: {
+      ...current.quizSessions,
+      [type]: session
+    }
+  }));
+}
+
+export function clearQuizSession(type) {
+  return updateAppData((current) => ({
+    ...current,
+    quizSessions: {
+      ...current.quizSessions,
+      [type]: null
+    }
+  }));
 }

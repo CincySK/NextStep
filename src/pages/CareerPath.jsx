@@ -1,96 +1,72 @@
-import { useMemo, useState } from "react";
-import QuizQuestion from "../components/QuizQuestion";
-import ProgressBadge from "../components/ProgressBadge";
-import { careerQuiz, careerResults } from "../data";
-import { updateAppData } from "../storage";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { loadQuizSession } from "../storage";
+import { getEstimatedSteps } from "../quiz/quizEngine";
+import { getResumeMeta, isResumableSession } from "../quiz/progressUtils";
+
+const highlights = [
+  {
+    title: "Match strengths to career paths",
+    text: "Discover career areas aligned with how you think, solve problems, and collaborate."
+  },
+  {
+    title: "Connect interests to majors",
+    text: "See how your answers map to practical major options you can explore next."
+  },
+  {
+    title: "Get a personalized roadmap",
+    text: "Receive a narrative summary with concrete next steps for your next semester."
+  }
+];
 
 export default function CareerPath() {
-  const [answers, setAnswers] = useState({});
-  const [result, setResult] = useState(null);
+  const navigate = useNavigate();
+  const savedSession = loadQuizSession("career");
 
-  const answeredCount = Object.keys(answers).length;
-
-  const canSubmit = answeredCount === careerQuiz.length;
-
-  const scoreLabel = useMemo(() => {
-    if (!result) return "Not scored";
-    return result.title;
-  }, [result]);
-
-  function handleAnswer(index, label) {
-    setAnswers((prev) => ({ ...prev, [index]: label }));
-  }
-
-  function finishQuiz() {
-    const tally = { Technology: 0, Healthcare: 0, Business: 0 };
-
-    careerQuiz.forEach((q, idx) => {
-      const selected = q.options.find((o) => o.label === answers[idx]);
-      if (selected) tally[selected.tag] += 1;
-    });
-
-    const winner = Object.entries(tally).sort((a, b) => b[1] - a[1])[0][0];
-    const picked = careerResults[winner];
-    setResult(picked);
-
-    updateAppData((current) => ({
-      ...current,
-      progress: { ...current.progress, careerComplete: true },
-      scores: { ...current.scores, career: picked.title }
-    }));
-  }
-
-  function saveFavorite(career) {
-    updateAppData((current) => {
-      const exists = current.favorites.some((f) => f.type === "career" && f.name === career);
-      if (exists) return current;
-      return {
-        ...current,
-        favorites: [...current.favorites, { type: "career", name: career }]
-      };
-    });
-  }
+  const canResume = useMemo(() => isResumableSession(savedSession), [savedSession]);
+  const resumeMeta = useMemo(
+    () => getResumeMeta(savedSession, getEstimatedSteps("career")),
+    [savedSession]
+  );
 
   return (
     <section className="section-card module-card">
       <div className="section-header">
         <div>
-          <h2>Career Path Module</h2>
-          <p className="intro-copy">Answer each prompt, then review your recommended career direction.</p>
-        </div>
-        <div className="badge-row">
-          <ProgressBadge label="Answered" value={`${answeredCount}/${careerQuiz.length}`} tone="default" />
-          <ProgressBadge label="Current Result" value={scoreLabel} tone="default" />
+          <h2>Career Path</h2>
+          <p className="intro-copy">
+            Take a guided adaptive quiz that adjusts follow-up questions based on your answers and builds a clearer
+            career direction.
+          </p>
         </div>
       </div>
 
-      {careerQuiz.map((question, index) => (
-        <QuizQuestion
-          key={question.prompt}
-          prompt={question.prompt}
-          options={question.options}
-          selected={answers[index]}
-          onSelect={(value) => handleAnswer(index, value)}
-        />
-      ))}
+      <div className="intro-grid">
+        {highlights.map((item) => (
+          <article key={item.title} className="mini-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
 
-      <button className="primary-btn" disabled={!canSubmit} onClick={finishQuiz}>
-        See My Career Match
-      </button>
-
-      {result && (
-        <article className="result-card">
-          <h3>{result.title}</h3>
-          <p>{result.blurb}</p>
-          <p className="mini-label">Recommended Careers</p>
-          <div className="chip-row">
-            {result.careers.map((career) => (
-              <button key={career} className="chip" onClick={() => saveFavorite(career)}>
-                + Favorite {career}
-              </button>
-            ))}
-          </div>
-        </article>
+      <div className="cta-row">
+        <button className="primary-btn" onClick={() => navigate("/career/quiz")}>
+          Take Quiz Now
+        </button>
+        {canResume && (
+          <button className="secondary-btn" onClick={() => navigate("/career/quiz")}>
+            Resume Quiz ({resumeMeta.currentStep}/{resumeMeta.totalSteps})
+          </button>
+        )}
+        <button className="secondary-btn" onClick={() => navigate("/dashboard")}>
+          Learn How It Works
+        </button>
+      </div>
+      {canResume && (
+        <p className="quiz-meta">
+          Progress saved at step {resumeMeta.currentStep} of {resumeMeta.totalSteps} ({resumeMeta.percent}% complete). Last updated {resumeMeta.updatedAtText}.
+        </p>
       )}
     </section>
   );
