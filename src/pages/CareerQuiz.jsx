@@ -7,6 +7,7 @@ import { analyzeCareerAnswerHistory, scoreCareerMatches, validateCareerRecommend
 import { buildCareerResultsSummary } from "../quiz/career/careerResultsBuilder";
 import { generateCareerFollowUpQuestion } from "../services/aiCareerService";
 import { finalizeFirstQuizPersonalization } from "../personalization/profileLifecycle";
+import { loadPersonalizationProfile } from "../personalization/personalizationStorage";
 import { loadQuizSession, saveQuizSession, updateAppData } from "../storage";
 
 const CAREER_SESSION_VERSION = 2;
@@ -66,6 +67,7 @@ export default function CareerQuiz() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [compareSelection, setCompareSelection] = useState([]);
+  const personalizedProfile = loadPersonalizationProfile();
 
   const questionMap = useMemo(
     () => ({
@@ -444,9 +446,17 @@ export default function CareerQuiz() {
             </ul>
           </article>
 
+          {personalizedProfile?.primaryPath === "career" && (
+            <p className="feedback">
+              Personalization unlocked. Your dashboard now prioritizes career modules and next steps based on these results.
+            </p>
+          )}
+
           <div className="quiz-nav">
             <button className="secondary-btn" onClick={startOver}>Retake Quiz</button>
-            <button className="primary-btn" onClick={() => navigate("/dashboard")}>Save and Go to Dashboard</button>
+            <button className="primary-btn" onClick={() => navigate("/dashboard")}>
+              {personalizedProfile?.primaryPath === "career" ? "Go to My Personalized Dashboard" : "Save and Go to Dashboard"}
+            </button>
           </div>
         </section>
       )}

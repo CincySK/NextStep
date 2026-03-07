@@ -1,4 +1,4 @@
-export default function ResultsSummary({ result, onStartOver }) {
+export default function ResultsSummary({ result, onStartOver, onGoDashboard, dashboardLabel = "Go to Dashboard" }) {
   return (
     <section className="quiz-results-card">
       <p className="quiz-flow-label">Personalized Summary</p>
@@ -67,6 +67,11 @@ export default function ResultsSummary({ result, onStartOver }) {
         <button className="secondary-btn" onClick={onStartOver}>
           Start New Quiz
         </button>
+        {onGoDashboard && (
+          <button className="primary-btn" onClick={onGoDashboard}>
+            {dashboardLabel}
+          </button>
+        )}
       </div>
     </section>
   );

@@ -22,6 +22,9 @@ export default function Home() {
     ? `Personalized for your ${profile.primaryPath} path`
     : "Student Planning Platform";
   const nextAction = profile?.suggestedNextActions?.[0] ?? "Finish one learning module and save one insight to your dashboard learning hub.";
+  const modeLabel = profile?.modeLabel ?? "Start your first pathway to unlock a personalized plan.";
+  const reasonWhy = profile?.reasonWhy ?? "";
+  const highlights = profile?.homeHighlights ?? [];
 
   const featureOrder = profile?.primaryPath === "career"
     ? ["career", "college", "money"]
@@ -52,6 +55,20 @@ export default function Home() {
     }
   };
 
+  const quickActionMap = {
+    "/career": { label: "Open Career Path", to: "/career" },
+    "/career/quiz": { label: "Take Career Quiz", to: "/career/quiz" },
+    "/college": { label: "Open College Match", to: "/college" },
+    "/college/quiz": { label: "Take College Quiz", to: "/college/quiz" },
+    "/money": { label: "Open Money Skills", to: "/money" },
+    "/dashboard": { label: "Go to Dashboard", to: "/dashboard" }
+  };
+
+  const quickActions = (profile?.quickLinks ?? ["/career", "/college", "/money"])
+    .map((path) => quickActionMap[path])
+    .filter(Boolean)
+    .slice(0, 3);
+
   return (
     <>
       <section className={`hero card hero-accent-${profile?.accentMode ?? "default"}`}>
@@ -59,6 +76,8 @@ export default function Home() {
           <p className="hero-kicker">{heroKicker}</p>
           <h1>{heroTitle}</h1>
           <p>{heroBody}</p>
+          <p className="hero-mode-label">{modeLabel}</p>
+          {reasonWhy && <p className="hero-why">{reasonWhy}</p>}
           <div className="badge-row">
             <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} tone="default" />
             <ProgressBadge label="Saved Favorites" value={snapshot.favorites.length} tone="default" />
@@ -67,8 +86,27 @@ export default function Home() {
         <div className="hero-panel">
           <h3>Your Recommended Next Action</h3>
           <p>{nextAction}</p>
+          <div className="cta-row quick-links-row">
+            {quickActions.map((action) => (
+              <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
+                {action.label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
+
+      {highlights.length > 0 && (
+        <section className="dashboard-grid home-highlight-grid">
+          {highlights.map((item) => (
+            <article key={item.title} className="mini-card home-highlight-card">
+              <p className="context-label">Why this is featured</p>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </section>
+      )}
 
       <section className="feature-grid">
         {featureOrder.map((key) => (

@@ -1,6 +1,6 @@
 import { completeOnboarding, loadOnboardingState } from "../onboarding/onboardingStorage";
 import { buildUserProfileFromQuiz } from "./personalizationEngine";
-import { savePersonalizationProfile } from "./personalizationStorage";
+import { savePersonalizationFlash, savePersonalizationProfile } from "./personalizationStorage";
 
 export function finalizeFirstQuizPersonalization({ quizType, answers, result }) {
   const onboardingState = loadOnboardingState();
@@ -14,6 +14,11 @@ export function finalizeFirstQuizPersonalization({ quizType, answers, result }) 
   });
 
   savePersonalizationProfile(profile);
+  savePersonalizationFlash({
+    type: "profile_ready",
+    title: profile.hero?.title,
+    primaryPath: onboardingState.primaryPath
+  });
   completeOnboarding({
     primaryPath: onboardingState.primaryPath,
     firstQuizType: quizType,

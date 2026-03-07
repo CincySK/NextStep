@@ -13,6 +13,7 @@ import {
   getQuestion
 } from "../../quiz/quizEngine";
 import { finalizeFirstQuizPersonalization } from "../../personalization/profileLifecycle";
+import { loadPersonalizationProfile } from "../../personalization/personalizationStorage";
 import { clearQuizSession, loadQuizSession, saveQuizSession, updateAppData } from "../../storage";
 import { getResumeMeta } from "../../quiz/progressUtils";
 
@@ -53,6 +54,11 @@ export default function QuizFlowPage({ type }) {
     const projectedNext = getNextQuestionId(type, currentQuestion.id, projectedAnswers, session.questionOrder);
     return !projectedNext;
   }, [currentQuestion, selectedValue, session.answers, session.questionOrder, type]);
+
+  const activeProfile = loadPersonalizationProfile();
+  const dashboardLabel = activeProfile?.primaryPath === type
+    ? "Go to My Personalized Dashboard"
+    : "Go to Dashboard";
 
   function persist(nextSession) {
     saveQuizSession(type, nextSession);
@@ -225,7 +231,12 @@ export default function QuizFlowPage({ type }) {
       )}
 
       {session.status === "results" && session.result && (
-        <ResultsSummary result={session.result} onStartOver={startOver} />
+        <ResultsSummary
+          result={session.result}
+          onStartOver={startOver}
+          onGoDashboard={() => navigate("/dashboard")}
+          dashboardLabel={dashboardLabel}
+        />
       )}
     </section>
   );

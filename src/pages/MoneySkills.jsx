@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProgressBadge from "../components/ProgressBadge";
 import { finalizeFirstQuizPersonalization } from "../personalization/profileLifecycle";
+import { loadPersonalizationProfile } from "../personalization/personalizationStorage";
 import { updateAppData } from "../storage";
 
 const sortingItems = [
@@ -12,6 +14,7 @@ const sortingItems = [
 ];
 
 export default function MoneySkills() {
+  const navigate = useNavigate();
   const [activeCard, setActiveCard] = useState("spending");
   const [spendingChoice, setSpendingChoice] = useState("");
   const [spendingFeedback, setSpendingFeedback] = useState("");
@@ -38,6 +41,7 @@ export default function MoneySkills() {
   );
 
   const completedCount = Object.values(completed).filter(Boolean).length;
+  const profile = loadPersonalizationProfile();
 
   useEffect(() => {
     const completedActivities = Object.entries(completed)
@@ -273,6 +277,20 @@ export default function MoneySkills() {
         <h3>Learning tip</h3>
         <p>Small weekly habits beat perfect plans. Start simple, review often, and improve one decision at a time.</p>
       </section>
+
+      {completedCount >= 3 && (
+        <section className="result-card">
+          <h3>Personalized Dashboard Ready</h3>
+          <p>
+            You completed enough activities to unlock a money-first personalized experience with tailored next steps.
+          </p>
+          <div className="cta-row">
+            <button className="primary-btn" onClick={() => navigate("/dashboard")}>
+              {profile?.primaryPath === "money" ? "Go to My Personalized Dashboard" : "Go to Dashboard"}
+            </button>
+          </div>
+        </section>
+      )}
     </section>
   );
 }
