@@ -10,7 +10,7 @@ const links = [
 ];
 
 export default function Navbar() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuestMode } = useAuth();
 
   return (
     <header className="top-nav-wrap">
@@ -36,10 +36,16 @@ export default function Navbar() {
               Dashboard
             </NavLink>
           )}
-          {!isAuthenticated && (
+          {!isAuthenticated && !isGuestMode && (
             <>
               <NavLink to="/login" className="nav-link nav-link-auth">Log in</NavLink>
               <NavLink to="/signup" className="nav-link nav-link-cta">Sign up</NavLink>
+            </>
+          )}
+          {!isAuthenticated && isGuestMode && (
+            <>
+              <span className="guest-badge">Guest Mode</span>
+              <NavLink to="/signup" className="nav-link nav-link-cta">Create account</NavLink>
             </>
           )}
           {isAuthenticated && <UserMenu />}

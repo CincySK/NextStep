@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 import { useAuth } from "../auth/useAuth";
 
@@ -9,12 +9,14 @@ function isValidEmail(email) {
 
 export default function SignupPage() {
   const { signUp, isAuthenticated, isConfigured, authError } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ displayName: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const resumeOnboarding = Boolean(location.state?.resumeOnboarding);
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
   const canSubmit = values.displayName.trim().length >= 2
@@ -73,7 +75,10 @@ export default function SignupPage() {
         password: values.password
       });
       if (data?.session?.user) {
-        navigate("/dashboard", { replace: true });
+        navigate(resumeOnboarding ? "/" : "/dashboard", {
+          replace: true,
+          state: resumeOnboarding ? { resumeOnboarding: true } : {}
+        });
       } else {
         setSuccess("Account created. Check your email to verify, then log in.");
       }
@@ -103,6 +108,7 @@ export default function SignupPage() {
       onSubmit={handleSubmit}
       footer={(
         <div className="auth-footer">
+          {resumeOnboarding && <p className="auth-helper">After signup, you&apos;ll continue onboarding.</p>}
           {success && <p className="feedback">{success}</p>}
           <p>Already have an account? <Link to="/login">Log in</Link></p>
         </div>

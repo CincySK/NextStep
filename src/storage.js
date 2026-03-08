@@ -1,4 +1,5 @@
 import { getAnonymousStorageKey, getScopedStorageKey } from "./auth/storageScope";
+import { getSessionStorage } from "./session/SessionManager";
 
 const KEY = "nextstep-data-v1";
 const LEGACY_KEY = "fyf-data-v1";
@@ -30,7 +31,12 @@ const defaultState = {
 
 export function loadAppData() {
   try {
-    const raw = localStorage.getItem(getScopedStorageKey(KEY))
+    const storage = getSessionStorage();
+    const raw = storage.getItem(getScopedStorageKey(KEY))
+      ?? storage.getItem(getScopedStorageKey(LEGACY_KEY))
+      ?? storage.getItem(getAnonymousStorageKey(KEY))
+      ?? storage.getItem(getAnonymousStorageKey(LEGACY_KEY))
+      ?? localStorage.getItem(getScopedStorageKey(KEY))
       ?? localStorage.getItem(getScopedStorageKey(LEGACY_KEY))
       ?? localStorage.getItem(getAnonymousStorageKey(KEY))
       ?? localStorage.getItem(getAnonymousStorageKey(LEGACY_KEY));
@@ -42,7 +48,7 @@ export function loadAppData() {
 }
 
 export function saveAppData(next) {
-  localStorage.setItem(getScopedStorageKey(KEY), JSON.stringify(next));
+  getSessionStorage().setItem(getScopedStorageKey(KEY), JSON.stringify(next));
 }
 
 export function updateAppData(updater) {

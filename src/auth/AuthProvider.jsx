@@ -2,6 +2,8 @@ import { createContext, useEffect, useMemo, useState } from "react";
 import { migrateAnonymousProgressToUser } from "./dataMigration";
 import { clearActiveUserId, setActiveUserId } from "./storageScope";
 import { isSupabaseConfigured, supabase } from "./supabaseClient";
+import { hasGuestData, isGuestMode, startGuestMode, stopGuestMode } from "./GuestSessionManager";
+import { clearGuestProgress, migrateGuestProgressToUser } from "../session/ProgressMigrationService";
 
 const AuthContext = createContext(null);
 
@@ -19,6 +21,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState("");
+  const [guestMode, setGuestMode] = useState(() => isGuestMode());
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
@@ -40,6 +43,8 @@ export function AuthProvider({ children }) {
       if (nextSession?.user?.id) {
         setActiveUserId(nextSession.user.id);
         migrateAnonymousProgressToUser(nextSession.user.id);
+        setGuestMode(false);
+        stopGuestMode();
       } else {
         clearActiveUserId();
       }
@@ -52,6 +57,8 @@ export function AuthProvider({ children }) {
       if (nextSession?.user?.id) {
         setActiveUserId(nextSession.user.id);
         migrateAnonymousProgressToUser(nextSession.user.id);
+        setGuestMode(false);
+        stopGuestMode();
       } else {
         clearActiveUserId();
       }
@@ -75,8 +82,15 @@ export function AuthProvider({ children }) {
     if (error) throw new Error(mapAuthError(error, "Could not create account."));
     const authedUserId = data?.session?.user?.id;
     if (authedUserId) {
+      if (guestMode && hasGuestData()) {
+        const shouldMigrate = window.confirm("Save your current guest progress to this account?");
+        if (shouldMigrate) migrateGuestProgressToUser(authedUserId);
+        clearGuestProgress();
+      }
       setActiveUserId(authedUserId);
       migrateAnonymousProgressToUser(authedUserId);
+      setGuestMode(false);
+      stopGuestMode();
     }
     return data;
   }
@@ -86,8 +100,15 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(mapAuthError(error, "Could not sign in."));
     if (data?.user?.id) {
+      if (guestMode && hasGuestData()) {
+        const shouldMigrate = window.confirm("Save your current guest progress to this account?");
+        if (shouldMigrate) migrateGuestProgressToUser(data.user.id);
+        clearGuestProgress();
+      }
       setActiveUserId(data.user.id);
       migrateAnonymousProgressToUser(data.user.id);
+      setGuestMode(false);
+      stopGuestMode();
     }
     return data;
   }
@@ -96,6 +117,8 @@ export function AuthProvider({ children }) {
     if (!supabase) return;
     await supabase.auth.signOut();
     clearActiveUserId();
+    setGuestMode(false);
+    stopGuestMode();
   }
 
   async function resetPassword(email) {
@@ -113,6 +136,16 @@ export function AuthProvider({ children }) {
     return data;
   }
 
+  function enableGuestMode() {
+    startGuestMode();
+    setGuestMode(true);
+  }
+
+  function disableGuestMode() {
+    stopGuestMode();
+    setGuestMode(false);
+  }
+
   const value = useMemo(
     () => ({
       user,
@@ -120,14 +153,17 @@ export function AuthProvider({ children }) {
       loading,
       authError,
       isAuthenticated: Boolean(user),
+      isGuestMode: guestMode,
       isConfigured: isSupabaseConfigured,
       signUp,
       signIn,
       signOut,
       resetPassword,
-      updateDisplayName
+      updateDisplayName,
+      enableGuestMode,
+      disableGuestMode
     }),
-    [authError, loading, session, user]
+    [authError, guestMode, loading, session, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -4,7 +4,13 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import OnboardingContainer from "./components/onboarding/OnboardingContainer";
-import { isOnboardingComplete, loadOnboardingState, resetOnboarding } from "./onboarding/onboardingStorage";
+import {
+  clearOnboardingDraft,
+  isOnboardingComplete,
+  loadOnboardingDraft,
+  loadOnboardingState,
+  resetOnboarding
+} from "./onboarding/onboardingStorage";
 import { clearPersonalizationProfile } from "./personalization/personalizationStorage";
 import Home from "./pages/Home";
 import CareerPath from "./pages/CareerPath";
@@ -24,7 +30,8 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(() => {
     const complete = isOnboardingComplete();
     const state = loadOnboardingState();
-    return !complete && !state?.primaryPath;
+    const draft = loadOnboardingDraft();
+    return !complete && (!state?.primaryPath || Boolean(draft));
   });
 
   useEffect(() => {
@@ -46,8 +53,10 @@ export default function App() {
 
   useEffect(() => {
     const state = loadOnboardingState();
+    const draft = loadOnboardingDraft();
     if (isOnboardingComplete()) return;
     if (!state?.primaryPath) return;
+    if (draft) return;
     if (location.pathname !== "/") return;
     const target = state.primaryPath === "career"
       ? "/career/quiz"
@@ -58,18 +67,29 @@ export default function App() {
   }, [location.pathname, navigate]);
 
   function handleOnboardingComplete(payload) {
+    if (payload?.closeOnly) {
+      setShowOnboarding(false);
+      return;
+    }
     setShowOnboarding(false);
     if (payload?.targetRoute) navigate(payload.targetRoute);
   }
 
   function handleRestartOnboarding() {
     resetOnboarding();
+    clearOnboardingDraft();
     clearPersonalizationProfile();
     setShowOnboarding(true);
     navigate("/");
   }
 
   const isAuthScreen = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
+
+  useEffect(() => {
+    if (!location.state?.resumeOnboarding) return;
+    setShowOnboarding(true);
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location.pathname, location.state, navigate]);
 
   return (
     <div className="app-shell">
@@ -88,7 +108,7 @@ export default function App() {
           <Route
             path="/dashboard"
             element={(
-              <ProtectedRoute>
+              <ProtectedRoute allowGuest>
                 <Dashboard onRestartOnboarding={handleRestartOnboarding} />
               </ProtectedRoute>
             )}

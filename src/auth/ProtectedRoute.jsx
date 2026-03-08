@@ -1,9 +1,9 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./useAuth";
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, allowGuest = false }) {
   const location = useLocation();
-  const { loading, isAuthenticated, isConfigured, authError } = useAuth();
+  const { loading, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
 
   if (loading) {
     return (
@@ -15,6 +15,10 @@ export default function ProtectedRoute({ children }) {
         </article>
       </section>
     );
+  }
+
+  if (allowGuest && isGuestMode) {
+    return children;
   }
 
   if (!isConfigured) {

@@ -15,8 +15,9 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+  const resumeOnboarding = Boolean(location.state?.resumeOnboarding);
 
-  const destination = useMemo(() => location.state?.from ?? "/dashboard", [location.state?.from]);
+  const destination = useMemo(() => (resumeOnboarding ? "/" : (location.state?.from ?? "/dashboard")), [location.state?.from, resumeOnboarding]);
   const canSubmit = isValidEmail(values.email) && values.password.length > 0 && isConfigured;
   const fieldState = {
     emailValid: touched.email && isValidEmail(values.email),
@@ -60,7 +61,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn({ email: values.email.trim(), password: values.password });
-      navigate(destination, { replace: true });
+      navigate(destination, { replace: true, state: resumeOnboarding ? { resumeOnboarding: true } : {} });
     } catch (error) {
       setErrors({ global: error.message ?? "Could not sign in. Please try again." });
     } finally {
@@ -87,6 +88,7 @@ export default function LoginPage() {
       onSubmit={handleSubmit}
       footer={(
         <div className="auth-footer">
+          {resumeOnboarding && <p className="auth-helper">You&apos;ll return to onboarding right after login.</p>}
           <Link to="/forgot-password">Forgot password?</Link>
           <p>Need an account? <Link to="/signup">Sign up</Link></p>
         </div>

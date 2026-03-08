@@ -1,11 +1,15 @@
 import { getAnonymousStorageKey, getScopedStorageKey } from "../auth/storageScope";
+import { getSessionStorage } from "../session/SessionManager";
 
 const PROFILE_KEY = "nextstep_personalization_profile";
 const FLASH_KEY = "nextstep_personalization_flash";
 
 export function loadPersonalizationProfile() {
   try {
-    const raw = localStorage.getItem(getScopedStorageKey(PROFILE_KEY))
+    const storage = getSessionStorage();
+    const raw = storage.getItem(getScopedStorageKey(PROFILE_KEY))
+      ?? storage.getItem(getAnonymousStorageKey(PROFILE_KEY))
+      ?? localStorage.getItem(getScopedStorageKey(PROFILE_KEY))
       ?? localStorage.getItem(getAnonymousStorageKey(PROFILE_KEY));
     if (!raw) return null;
     return JSON.parse(raw);
@@ -15,7 +19,7 @@ export function loadPersonalizationProfile() {
 }
 
 export function savePersonalizationProfile(profile) {
-  localStorage.setItem(
+  getSessionStorage().setItem(
     getScopedStorageKey(PROFILE_KEY),
     JSON.stringify({
       ...profile,
@@ -25,12 +29,13 @@ export function savePersonalizationProfile(profile) {
 }
 
 export function clearPersonalizationProfile() {
-  localStorage.removeItem(getScopedStorageKey(PROFILE_KEY));
-  localStorage.removeItem(getScopedStorageKey(FLASH_KEY));
+  const storage = getSessionStorage();
+  storage.removeItem(getScopedStorageKey(PROFILE_KEY));
+  storage.removeItem(getScopedStorageKey(FLASH_KEY));
 }
 
 export function savePersonalizationFlash(payload) {
-  localStorage.setItem(
+  getSessionStorage().setItem(
     getScopedStorageKey(FLASH_KEY),
     JSON.stringify({
       ...payload,
@@ -41,7 +46,10 @@ export function savePersonalizationFlash(payload) {
 
 export function loadPersonalizationFlash() {
   try {
-    const raw = localStorage.getItem(getScopedStorageKey(FLASH_KEY))
+    const storage = getSessionStorage();
+    const raw = storage.getItem(getScopedStorageKey(FLASH_KEY))
+      ?? storage.getItem(getAnonymousStorageKey(FLASH_KEY))
+      ?? localStorage.getItem(getScopedStorageKey(FLASH_KEY))
       ?? localStorage.getItem(getAnonymousStorageKey(FLASH_KEY));
     if (!raw) return null;
     return JSON.parse(raw);
@@ -51,5 +59,5 @@ export function loadPersonalizationFlash() {
 }
 
 export function clearPersonalizationFlash() {
-  localStorage.removeItem(getScopedStorageKey(FLASH_KEY));
+  getSessionStorage().removeItem(getScopedStorageKey(FLASH_KEY));
 }

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 import ProgressBadge from "../components/ProgressBadge";
 import {
   clearPersonalizationFlash,
@@ -32,6 +33,7 @@ function getOnboardingSuggestions(profile) {
 
 export default function Dashboard({ onRestartOnboarding }) {
   const navigate = useNavigate();
+  const { isGuestMode } = useAuth();
   const [data, setData] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
   const [flash, setFlash] = useState(() => loadPersonalizationFlash());
@@ -251,6 +253,13 @@ export default function Dashboard({ onRestartOnboarding }) {
 
   return (
     <section className={`section-card module-card dash-accent-${profile?.accentMode ?? "default"}`}>
+      {isGuestMode && (
+        <section className="guest-reminder">
+          <p>You&apos;re using guest mode. Create an account to permanently save progress.</p>
+          <button className="primary-btn" onClick={() => navigate("/signup")}>Create Account</button>
+        </section>
+      )}
+
       {flash && (
         <section className="flash-banner">
           <p className="quiz-flow-label">Personalization Ready</p>

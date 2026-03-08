@@ -211,6 +211,23 @@ p {
   margin-top: 1rem;
 }
 
+.guest-reminder {
+  margin-bottom: 1rem;
+  padding: 0.85rem;
+  border-radius: 14px;
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  display: flex;
+  gap: 0.7rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.guest-reminder p {
+  color: #9a3412;
+  font-weight: 600;
+}
+
 .auth-state-card {
   text-align: center;
 }
@@ -320,6 +337,16 @@ p {
 .nav-link-cta:hover {
   background: var(--primary-hover);
   color: #fff;
+}
+
+.guest-badge {
+  border-radius: 999px;
+  padding: 0.32rem 0.62rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .user-menu {
@@ -1809,6 +1836,36 @@ p {
   flex-wrap: wrap;
 }
 
+.onboarding-benefits {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.onboarding-auth-actions {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.onboarding-auth-actions .primary-btn,
+.onboarding-auth-actions .secondary-btn {
+  margin-top: 0;
+}
+
+.onboarding-link-btn {
+  border: 0;
+  background: transparent;
+  color: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+  padding: 0.45rem 0.2rem;
+  cursor: pointer;
+}
+
+.onboarding-link-btn:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 760px) {
   .onboarding-shell {
     padding: 1rem;
@@ -1822,5 +1879,10 @@ p {
   .onboarding-nav .primary-btn,
   .onboarding-nav .secondary-btn {
     width: 100%;
+  }
+
+  .guest-reminder {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
