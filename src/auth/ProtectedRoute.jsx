@@ -3,7 +3,7 @@ import { useAuth } from "./useAuth";
 
 export default function ProtectedRoute({ children, allowGuest = false }) {
   const location = useLocation();
-  const { loading, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
+  const { loading, isAuthenticated, isConfigured, authError, isGuestMode, selectedRole } = useAuth();
 
   if (loading) {
     return (
@@ -33,6 +33,7 @@ export default function ProtectedRoute({ children, allowGuest = false }) {
   }
 
   if (!isAuthenticated) {
+    if (!selectedRole) return <Navigate to="/auth/role" replace />;
     return <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}${location.hash}` }} />;
   }
 

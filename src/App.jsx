@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import RoleGuard from "./auth/RoleGuard";
+import StudentOnlyGate from "./auth/StudentOnlyGate";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import OnboardingContainer from "./components/onboarding/OnboardingContainer";
@@ -18,7 +20,6 @@ import CareerQuiz from "./pages/CareerQuiz";
 import CollegeMatch from "./pages/CollegeMatch";
 import CollegeQuiz from "./pages/CollegeQuiz";
 import MoneySkills from "./pages/MoneySkills";
-import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
@@ -28,11 +29,17 @@ import ClassesPage from "./pages/ClassesPage";
 import ClassDetailPage from "./pages/ClassDetailPage";
 import AssignmentDetailPage from "./pages/AssignmentDetailPage";
 import TeacherPage from "./pages/TeacherPage";
+import RoleSelectionPage from "./pages/RoleSelectionPage";
+import RoleAwareDashboard from "./pages/RoleAwareDashboard";
+import { useAuth } from "./auth/useAuth";
 
 export default function App() {
+  const { isAuthenticated, userRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [showOnboarding, setShowOnboarding] = useState(() => {
+    if (!isAuthenticated) return false;
+    if (userRole === "teacher") return false;
     const complete = isOnboardingComplete();
     const state = loadOnboardingState();
     const draft = loadOnboardingDraft();
@@ -50,19 +57,36 @@ export default function App() {
       "/dashboard": "NextStep | Learning Hub",
       "/login": "NextStep | Log In",
       "/signup": "NextStep | Sign Up",
+      "/auth/role": "NextStep | Choose Role",
       "/forgot-password": "NextStep | Reset Password",
       "/profile": "NextStep | Profile",
       "/study-assistant": "NextStep | Study Assistant",
       "/classes": "NextStep | My Classes",
-      "/teacher": "NextStep | Teacher Dashboard"
+      "/teacher": "NextStep | Teacher Dashboard",
+      "/teacher/dashboard": "NextStep | Teacher Dashboard",
+      "/teacher/classes": "NextStep | Teacher Classes",
+      "/teacher/students": "NextStep | Students",
+      "/teacher/upload": "NextStep | Upload Materials"
     };
     document.title = titles[location.pathname] ?? "NextStep | Student Future Planning";
   }, [location.pathname]);
 
   useEffect(() => {
+    if (!isAuthenticated || userRole === "teacher") {
+      setShowOnboarding(false);
+      return;
+    }
+    const complete = isOnboardingComplete();
+    const state = loadOnboardingState();
+    const draft = loadOnboardingDraft();
+    setShowOnboarding(!complete && (!state?.primaryPath || Boolean(draft)));
+  }, [isAuthenticated, userRole]);
+
+  useEffect(() => {
     const state = loadOnboardingState();
     const draft = loadOnboardingDraft();
     if (isOnboardingComplete()) return;
+    if (!isAuthenticated || userRole === "teacher") return;
     if (!state?.primaryPath) return;
     if (draft) return;
     if (location.pathname !== "/") return;
@@ -72,7 +96,7 @@ export default function App() {
         ? "/college/quiz"
         : "/money";
     navigate(target);
-  }, [location.pathname, navigate]);
+  }, [isAuthenticated, location.pathname, navigate, userRole]);
 
   function handleOnboardingComplete(payload) {
     if (payload?.closeOnly) {
@@ -91,7 +115,7 @@ export default function App() {
     navigate("/");
   }
 
-  const isAuthScreen = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
+  const isAuthScreen = ["/auth/role", "/login", "/signup", "/forgot-password"].includes(location.pathname);
 
   useEffect(() => {
     if (!location.state?.resumeOnboarding) return;
@@ -105,11 +129,12 @@ export default function App() {
       <main className="container page-wrap">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/career" element={<CareerPath />} />
-          <Route path="/career/quiz" element={<CareerQuiz />} />
-          <Route path="/college" element={<CollegeMatch />} />
-          <Route path="/college/quiz" element={<CollegeQuiz />} />
-          <Route path="/money" element={<MoneySkills />} />
+          <Route path="/career" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
+          <Route path="/career/quiz" element={<StudentOnlyGate><CareerQuiz /></StudentOnlyGate>} />
+          <Route path="/college" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
+          <Route path="/college/quiz" element={<StudentOnlyGate><CollegeQuiz /></StudentOnlyGate>} />
+          <Route path="/money" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
+          <Route path="/auth/role" element={<RoleSelectionPage />} />
           <Route
             path="/study-assistant"
             element={(
@@ -146,7 +171,49 @@ export default function App() {
             path="/teacher"
             element={(
               <ProtectedRoute>
-                <TeacherPage />
+                <RoleGuard role="teacher">
+                  <TeacherPage />
+                </RoleGuard>
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/teacher/dashboard"
+            element={(
+              <ProtectedRoute>
+                <RoleGuard role="teacher">
+                  <TeacherPage />
+                </RoleGuard>
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/teacher/classes"
+            element={(
+              <ProtectedRoute>
+                <RoleGuard role="teacher">
+                  <ClassesPage />
+                </RoleGuard>
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/teacher/upload"
+            element={(
+              <ProtectedRoute>
+                <RoleGuard role="teacher">
+                  <TeacherPage />
+                </RoleGuard>
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/teacher/students"
+            element={(
+              <ProtectedRoute>
+                <RoleGuard role="teacher">
+                  <TeacherPage />
+                </RoleGuard>
               </ProtectedRoute>
             )}
           />
@@ -157,7 +224,7 @@ export default function App() {
             path="/dashboard"
             element={(
               <ProtectedRoute allowGuest>
-                <Dashboard onRestartOnboarding={handleRestartOnboarding} />
+                <RoleAwareDashboard onRestartOnboarding={handleRestartOnboarding} />
               </ProtectedRoute>
             )}
           />
@@ -173,7 +240,9 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
-      {showOnboarding && !isAuthScreen && <OnboardingContainer onComplete={handleOnboardingComplete} />}
+      {showOnboarding && isAuthenticated && userRole !== "teacher" && !isAuthScreen && (
+        <OnboardingContainer onComplete={handleOnboardingComplete} />
+      )}
     </div>
   );
 }

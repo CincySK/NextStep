@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 
 export default function UserMenu() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, userRole } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
@@ -14,6 +14,12 @@ export default function UserMenu() {
     await signOut();
     setOpen(false);
     navigate("/", { replace: true });
+  }
+
+  async function handleSwitchRole() {
+    await signOut();
+    setOpen(false);
+    navigate("/auth/role", { replace: true });
   }
 
   useEffect(() => {
@@ -48,8 +54,11 @@ export default function UserMenu() {
           <Link to="/dashboard" className="user-link" onClick={() => setOpen(false)}>Dashboard</Link>
           <Link to="/study-assistant" className="user-link" onClick={() => setOpen(false)}>Study Assistant</Link>
           <Link to="/classes" className="user-link" onClick={() => setOpen(false)}>My Classes</Link>
-          <Link to="/teacher" className="user-link" onClick={() => setOpen(false)}>Teacher</Link>
+          {userRole === "teacher" && (
+            <Link to="/teacher" className="user-link" onClick={() => setOpen(false)}>Teacher Dashboard</Link>
+          )}
           <Link to="/profile" className="user-link" onClick={() => setOpen(false)}>Profile</Link>
+          <button type="button" className="user-link user-link-button" onClick={handleSwitchRole}>Switch Role</button>
           <button type="button" className="user-link user-link-button" onClick={handleLogout}>Log Out</button>
         </div>
       )}

@@ -9,7 +9,7 @@ function isValidEmail(email) {
 }
 
 export default function LoginPage() {
-  const { signIn, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
+  const { signIn, isAuthenticated, isConfigured, authError, isGuestMode, selectedRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: "", password: "" });
@@ -28,6 +28,7 @@ export default function LoginPage() {
   };
 
   if (isAuthenticated) return <Navigate to={destination} replace />;
+  if (!selectedRole) return <Navigate to="/auth/role" replace />;
 
   function onChange(event) {
     const { name, value } = event.target;
@@ -66,6 +67,7 @@ export default function LoginPage() {
       await signIn({
         email: values.email.trim(),
         password: values.password,
+        role: selectedRole,
         migrateGuestProgress
       });
       navigate(destination, { replace: true, state: resumeOnboarding ? { resumeOnboarding: true } : {} });
@@ -81,6 +83,7 @@ export default function LoginPage() {
       mode="login"
       title="Log in to NextStep"
       subtitle="Continue your personalized future-planning journey."
+      contextLabel={`Role: ${selectedRole === "teacher" ? "Teacher" : "Student"}`}
       values={values}
       errors={{
         ...errors,
@@ -107,6 +110,7 @@ export default function LoginPage() {
           )}
           {resumeOnboarding && <p className="auth-helper">You&apos;ll return to onboarding right after login.</p>}
           <Link to="/forgot-password">Forgot password?</Link>
+          <p>Wrong role? <Link to="/auth/role">Switch role</Link></p>
           <p>Need an account? <Link to="/signup">Sign up</Link></p>
         </div>
       )}

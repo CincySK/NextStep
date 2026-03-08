@@ -9,7 +9,7 @@ function isValidEmail(email) {
 }
 
 export default function SignupPage() {
-  const { signUp, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
+  const { signUp, isAuthenticated, isConfigured, authError, isGuestMode, selectedRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ displayName: "", email: "", password: "" });
@@ -22,6 +22,7 @@ export default function SignupPage() {
   const showMigrationOption = isGuestMode && hasGuestData();
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (!selectedRole) return <Navigate to="/auth/role" replace />;
   const canSubmit = values.displayName.trim().length >= 2
     && isValidEmail(values.email)
     && values.password.length >= 8
@@ -76,6 +77,7 @@ export default function SignupPage() {
         displayName: values.displayName.trim(),
         email: values.email.trim(),
         password: values.password,
+        role: selectedRole,
         migrateGuestProgress
       });
       if (data?.session?.user) {
@@ -98,6 +100,7 @@ export default function SignupPage() {
       mode="signup"
       title="Create your NextStep account"
       subtitle="Save your progress, quizzes, and personalized future plan."
+      contextLabel={`Role: ${selectedRole === "teacher" ? "Teacher" : "Student"}`}
       values={values}
       errors={{
         ...errors,
@@ -124,6 +127,7 @@ export default function SignupPage() {
           )}
           {resumeOnboarding && <p className="auth-helper">After signup, you&apos;ll continue onboarding.</p>}
           {success && <p className="feedback">{success}</p>}
+          <p>Wrong role? <Link to="/auth/role">Switch role</Link></p>
           <p>Already have an account? <Link to="/login">Log in</Link></p>
         </div>
       )}

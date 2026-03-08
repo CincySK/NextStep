@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
 import FeatureCard from "../components/FeatureCard";
 import ProgressBadge from "../components/ProgressBadge";
@@ -8,7 +8,7 @@ import { loadAppData } from "../storage";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { isGuestMode, isAuthenticated } = useAuth();
+  const { isGuestMode, isAuthenticated, userRole } = useAuth();
   const [snapshot] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
 
@@ -72,6 +72,10 @@ export default function Home() {
     .map((path) => quickActionMap[path])
     .filter(Boolean)
     .slice(0, 3);
+
+  if (isAuthenticated && userRole === "teacher") {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <>

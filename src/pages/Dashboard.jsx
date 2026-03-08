@@ -33,7 +33,7 @@ function getOnboardingSuggestions(profile) {
 
 export default function Dashboard({ onRestartOnboarding }) {
   const navigate = useNavigate();
-  const { isGuestMode, isAuthenticated } = useAuth();
+  const { isGuestMode, isAuthenticated, userRole } = useAuth();
   const [data, setData] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
   const [flash, setFlash] = useState(() => loadPersonalizationFlash());
@@ -260,10 +260,13 @@ export default function Dashboard({ onRestartOnboarding }) {
   const utilityActions = isAuthenticated
     ? [
       { label: "Open Study Assistant", to: "/study-assistant" },
-      { label: "Open My Classes", to: "/classes" },
-      { label: "Teacher Dashboard", to: "/teacher" }
+      { label: "Open My Classes", to: "/classes" }
     ]
     : [{ label: "Open Study Assistant", to: "/study-assistant" }];
+
+  if (isAuthenticated && userRole === "teacher") {
+    utilityActions.push({ label: "Teacher Dashboard", to: "/teacher" });
+  }
 
   useEffect(() => {
     if (!flash) return;

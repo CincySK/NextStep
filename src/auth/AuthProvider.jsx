@@ -4,6 +4,7 @@ import { clearActiveUserId, setActiveUserId } from "./storageScope";
 import { isSupabaseConfigured, supabase } from "./supabaseClient";
 import { hasGuestData, isGuestMode, startGuestMode, stopGuestMode } from "./GuestSessionManager";
 import { clearGuestProgress, migrateGuestProgressToUser } from "../session/ProgressMigrationService";
+import { clearSelectedRole, getSelectedRole, setSelectedRole } from "./roleSession";
 
 const AuthContext = createContext(null);
 
@@ -16,12 +17,17 @@ function mapAuthError(error, fallback) {
   return fallback ?? msg;
 }
 
+function normalizeRole(value) {
+  return value === "teacher" ? "teacher" : "student";
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState("");
   const [guestMode, setGuestMode] = useState(() => isGuestMode());
+  const [selectedRole, setSelectedRoleState] = useState(() => getSelectedRole());
 
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
@@ -70,13 +76,20 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  async function signUp({ email, password, displayName, migrateGuestProgress = true }) {
+  const userRole = normalizeRole(
+    user?.user_metadata?.role
+    ?? user?.app_metadata?.role
+    ?? selectedRole
+  );
+
+  async function signUp({ email, password, displayName, role = "student", migrateGuestProgress = true }) {
     if (!supabase) throw new Error("Auth provider is not configured.");
+    const normalizedRole = normalizeRole(role || selectedRole || "student");
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { display_name: displayName }
+        data: { display_name: displayName, role: normalizedRole }
       }
     });
     if (error) throw new Error(mapAuthError(error, "Could not create account."));
@@ -91,13 +104,31 @@ export function AuthProvider({ children }) {
       setGuestMode(false);
       stopGuestMode();
     }
+    setSelectedRole(normalizedRole);
+    setSelectedRoleState(normalizedRole);
     return data;
   }
 
-  async function signIn({ email, password, migrateGuestProgress = true }) {
+  async function signIn({ email, password, role = "", migrateGuestProgress = true }) {
     if (!supabase) throw new Error("Auth provider is not configured.");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(mapAuthError(error, "Could not sign in."));
+    const metadataRole = data?.user?.user_metadata?.role ?? data?.user?.app_metadata?.role ?? "";
+    const requestedRole = normalizeRole(role || selectedRole || "student");
+    let accountRole = normalizeRole(metadataRole || "student");
+    if (!metadataRole) {
+      await supabase.auth.updateUser({
+        data: {
+          ...data?.user?.user_metadata,
+          role: requestedRole
+        }
+      });
+      accountRole = requestedRole;
+    }
+    if (requestedRole && accountRole !== requestedRole) {
+      await supabase.auth.signOut();
+      throw new Error(`This account is configured as ${accountRole}. Please continue as ${accountRole}.`);
+    }
     if (data?.user?.id) {
       if (guestMode && hasGuestData()) {
         if (migrateGuestProgress) migrateGuestProgressToUser(data.user.id);
@@ -108,6 +139,8 @@ export function AuthProvider({ children }) {
       setGuestMode(false);
       stopGuestMode();
     }
+    setSelectedRole(accountRole);
+    setSelectedRoleState(accountRole);
     return data;
   }
 
@@ -117,6 +150,8 @@ export function AuthProvider({ children }) {
     clearActiveUserId();
     setGuestMode(false);
     stopGuestMode();
+    clearSelectedRole();
+    setSelectedRoleState("");
   }
 
   async function resetPassword(email) {
@@ -137,11 +172,21 @@ export function AuthProvider({ children }) {
   function enableGuestMode() {
     startGuestMode();
     setGuestMode(true);
+    if (!selectedRole) {
+      setSelectedRole("student");
+      setSelectedRoleState("student");
+    }
   }
 
   function disableGuestMode() {
     stopGuestMode();
     setGuestMode(false);
+  }
+
+  function chooseRole(role) {
+    const normalizedRole = normalizeRole(role);
+    setSelectedRole(normalizedRole);
+    setSelectedRoleState(normalizedRole);
   }
 
   const value = useMemo(
@@ -153,6 +198,9 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       isGuestMode: guestMode,
       isConfigured: isSupabaseConfigured,
+      userRole,
+      selectedRole,
+      chooseRole,
       signUp,
       signIn,
       signOut,
@@ -161,7 +209,7 @@ export function AuthProvider({ children }) {
       enableGuestMode,
       disableGuestMode
     }),
-    [authError, guestMode, loading, session, user]
+    [authError, guestMode, loading, selectedRole, session, user, userRole]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

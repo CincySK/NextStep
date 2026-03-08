@@ -159,6 +159,21 @@ function buildHomeworkResponse(context, multimodalContext) {
   ].filter(Boolean).join("\n\n");
 }
 
+function buildTeacherResponse(context, multimodalContext) {
+  const assignmentLabel = context.assignmentTitle ? `"${context.assignmentTitle}"` : "this assignment";
+  return [
+    `I can help you prepare instructional support for ${assignmentLabel}.`,
+    "Choose one of these and I will generate it:",
+    "1. 5 scaffolded practice questions",
+    "2. A concise concept explainer",
+    "3. Discussion prompts and exit tickets",
+    "4. A common-mistakes checklist",
+    multimodalContext.attachmentSummary.length > 0
+      ? "I also analyzed your uploaded material to align the output with your worksheet context."
+      : ""
+  ].filter(Boolean).join("\n\n");
+}
+
 export async function generateTutorReply({
   message,
   classId,
@@ -199,9 +214,12 @@ export async function generateTutorReply({
   });
 
   const intent = detectIntent(message, attachmentAnalyses);
+  const isTeacher = (user?.user_metadata?.role ?? user?.app_metadata?.role) === "teacher";
 
   let text;
-  if (intent === "math") text = buildMathResponse(context, finalMultimodalContext);
+  if (isTeacher) {
+    text = buildTeacherResponse(context, finalMultimodalContext);
+  } else if (intent === "math") text = buildMathResponse(context, finalMultimodalContext);
   else if (intent === "writing") text = buildWritingResponse(context, finalMultimodalContext);
   else if (intent === "concept") text = buildConceptResponse(context, finalMultimodalContext);
   else if (intent === "diagram") text = buildDiagramResponse(context, finalMultimodalContext);

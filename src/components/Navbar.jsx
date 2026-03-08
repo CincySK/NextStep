@@ -2,16 +2,27 @@ import { NavLink } from "react-router-dom";
 import UserMenu from "./auth/UserMenu";
 import { useAuth } from "../auth/useAuth";
 
-const links = [
+const studentLinks = [
   { to: "/", label: "Home" },
   { to: "/career", label: "Career Path" },
   { to: "/college", label: "College Match" },
   { to: "/money", label: "Money Skills" },
-  { to: "/study-assistant", label: "Study Assistant" }
+  { to: "/study-assistant", label: "Study Assistant" },
+  { to: "/classes", label: "My Classes" }
+];
+
+const teacherLinks = [
+  { to: "/dashboard", label: "Dashboard" },
+  { to: "/classes", label: "My Classes" },
+  { to: "/teacher", label: "Assignments" },
+  { to: "/teacher/students", label: "Students" },
+  { to: "/teacher/upload", label: "Upload Materials" },
+  { to: "/study-assistant", label: "AI Assistant" }
 ];
 
 export default function Navbar() {
-  const { isAuthenticated, isGuestMode } = useAuth();
+  const { isAuthenticated, isGuestMode, userRole } = useAuth();
+  const links = isAuthenticated && userRole === "teacher" ? teacherLinks : studentLinks;
 
   return (
     <header className="top-nav-wrap">
@@ -32,14 +43,9 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
-          {isAuthenticated && (
+          {isAuthenticated && userRole !== "teacher" && (
             <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
               Dashboard
-            </NavLink>
-          )}
-          {isAuthenticated && (
-            <NavLink to="/classes" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
-              My Classes
             </NavLink>
           )}
           {!isAuthenticated && !isGuestMode && (

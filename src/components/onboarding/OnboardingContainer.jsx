@@ -1,6 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth/useAuth";
+import { useMemo, useState } from "react";
 import {
   clearOnboardingDraft,
   completeOnboarding,
@@ -17,7 +15,6 @@ const steps = [
   { id: "primaryPath", nextLabel: "Continue" },
   { id: "ageGroup", nextLabel: "Continue" },
   { id: "interestAreas", nextLabel: "Continue" },
-  { id: "accountChoice", nextLabel: "Continue as Guest" },
   { id: "startQuiz", nextLabel: "Start First Quiz" }
 ];
 
@@ -64,8 +61,6 @@ function initialState() {
 }
 
 export default function OnboardingContainer({ onComplete }) {
-  const navigate = useNavigate();
-  const { enableGuestMode, isAuthenticated } = useAuth();
   const state = initialState();
   const [stepIndex, setStepIndex] = useState(state.stepIndex);
   const [selectedPath, setSelectedPath] = useState(state.selectedPath);
@@ -80,7 +75,6 @@ export default function OnboardingContainer({ onComplete }) {
     if (step.id === "primaryPath") return Boolean(selectedPath);
     if (step.id === "ageGroup") return Boolean(ageGroup);
     if (step.id === "interestAreas") return interests.length > 0;
-    if (step.id === "accountChoice") return true;
     return Boolean(selectedPath);
   }, [ageGroup, interests.length, selectedPath, step.id]);
 
@@ -99,31 +93,11 @@ export default function OnboardingContainer({ onComplete }) {
     persistDraft(next);
   }
 
-  useEffect(() => {
-    // If the user returned from login/signup, skip account-choice step automatically.
-    if (step.id === "accountChoice" && isAuthenticated) {
-      const next = Math.min(stepIndex + 1, steps.length - 1);
-      setStepIndex(next);
-      persistDraft(next);
-    }
-  }, [isAuthenticated, step.id, stepIndex]);
-
   function handleBack() {
     if (stepIndex === 0) return;
     const next = Math.max(stepIndex - 1, 0);
     setStepIndex(next);
     persistDraft(next);
-  }
-
-  function handleAuthChoice(target) {
-    persistDraft(stepIndex);
-    navigate(target, { state: { resumeOnboarding: true } });
-    onComplete({ closeOnly: true });
-  }
-
-  function handleGuestChoice() {
-    enableGuestMode();
-    advance();
   }
 
   function handleNext() {
@@ -132,16 +106,12 @@ export default function OnboardingContainer({ onComplete }) {
       advance();
       return;
     }
-    if (step.id === "accountChoice") {
-      handleGuestChoice();
-      return;
-    }
     if (step.id === "startQuiz") {
       completeOnboarding({
         primaryPath: selectedPath,
         ageGroup,
         interests,
-        sessionMode: isAuthenticated ? "authenticated" : "guest",
+        sessionMode: "authenticated",
         firstQuizType: selectedPath,
         firstQuizCompletedAt: null
       });
@@ -211,42 +181,6 @@ export default function OnboardingContainer({ onComplete }) {
             </section>
           )}
 
-          {step.id === "accountChoice" && (
-            <section className="onboarding-step">
-              <h1>Save your progress?</h1>
-              {!isAuthenticated && (
-                <>
-                  <p>You can create an account to save quiz results, dashboard progress, and future plans.</p>
-                  <div className="onboarding-benefits">
-                    <span className="signal-chip">Save your results</span>
-                    <span className="signal-chip">Track your progress</span>
-                    <span className="signal-chip">Return anytime</span>
-                  </div>
-                  <div className="onboarding-auth-grid">
-                    <button type="button" className="onboarding-auth-card onboarding-auth-card-primary" onClick={() => handleAuthChoice("/signup")}>
-                      <strong>Create account</strong>
-                      <small>Best for saving progress and returning later.</small>
-                    </button>
-                    <button type="button" className="onboarding-auth-card" onClick={() => handleAuthChoice("/login")}>
-                      <strong>Log in</strong>
-                      <small>Continue with your existing NextStep account.</small>
-                    </button>
-                  </div>
-                  <div className="onboarding-auth-actions">
-                    <button type="button" className="onboarding-link-btn" onClick={handleGuestChoice}>Continue as Guest</button>
-                    <p className="auth-helper">Guest mode works fully, but progress is temporary for this browser session.</p>
-                  </div>
-                </>
-              )}
-              {isAuthenticated && (
-                <div className="onboarding-auth-actions">
-                  <p className="feedback">You&apos;re signed in. Your progress will be saved to your account.</p>
-                  <button type="button" className="primary-btn" onClick={advance}>Continue</button>
-                </div>
-              )}
-            </section>
-          )}
-
           {step.id === "startQuiz" && (
             <section className="onboarding-step">
               <h1>You&apos;re ready to start</h1>
@@ -255,15 +189,13 @@ export default function OnboardingContainer({ onComplete }) {
           )}
         </div>
 
-        {step.id !== "accountChoice" && (
-          <OnboardingNavigation
-            canGoBack={stepIndex > 0}
-            canGoNext={canContinue}
-            nextLabel={step.nextLabel ?? "Next"}
-            onBack={handleBack}
-            onNext={handleNext}
-          />
-        )}
+        <OnboardingNavigation
+          canGoBack={stepIndex > 0}
+          canGoNext={canContinue}
+          nextLabel={step.nextLabel ?? "Next"}
+          onBack={handleBack}
+          onNext={handleNext}
+        />
       </div>
     </div>
   );

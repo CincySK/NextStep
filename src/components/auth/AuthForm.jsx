@@ -4,6 +4,7 @@ export default function AuthForm({
   mode,
   title,
   subtitle,
+  contextLabel = "",
   values,
   errors,
   loading,
@@ -26,6 +27,7 @@ export default function AuthForm({
         <p className="quiz-flow-label">{isSignup ? "Create Account" : "Welcome Back"}</p>
         <h1>{title}</h1>
         <p>{subtitle}</p>
+        {contextLabel && <p className="auth-helper"><strong>{contextLabel}</strong></p>}
 
         <form className="auth-form" onSubmit={onSubmit}>
           {isSignup && (
