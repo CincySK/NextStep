@@ -7282,6 +7282,12 @@ p {
   text-decoration: none;
 }
 
+.nextstep-logo-file {
+  width: 210px;
+  height: auto;
+  display: block;
+}
+
 .nextstep-logo {
   display: inline-flex;
   align-items: center;
@@ -7317,6 +7323,10 @@ p {
 }
 
 @media (max-width: 900px) {
+  .nextstep-logo-file {
+    width: 160px;
+  }
+
   .nextstep-logo-mark {
     width: 36px;
     height: 36px;
