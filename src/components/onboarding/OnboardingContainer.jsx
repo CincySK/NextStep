@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/useAuth";
 import {
@@ -98,6 +98,15 @@ export default function OnboardingContainer({ onComplete }) {
     setStepIndex(next);
     persistDraft(next);
   }
+
+  useEffect(() => {
+    // If the user returned from login/signup, skip account-choice step automatically.
+    if (step.id === "accountChoice" && isAuthenticated) {
+      const next = Math.min(stepIndex + 1, steps.length - 1);
+      setStepIndex(next);
+      persistDraft(next);
+    }
+  }, [isAuthenticated, step.id, stepIndex]);
 
   function handleBack() {
     if (stepIndex === 0) return;
@@ -205,26 +214,36 @@ export default function OnboardingContainer({ onComplete }) {
           {step.id === "accountChoice" && (
             <section className="onboarding-step">
               <h1>Save your progress?</h1>
-              <p>You can create an account to save quiz results, dashboard progress, and future plans.</p>
-              <div className="onboarding-benefits">
-                <span className="signal-chip">Save your results</span>
-                <span className="signal-chip">Track your progress</span>
-                <span className="signal-chip">Return anytime</span>
-              </div>
-              <div className="onboarding-auth-grid">
-                <button type="button" className="onboarding-auth-card onboarding-auth-card-primary" onClick={() => handleAuthChoice("/signup")}>
-                  <strong>Create account</strong>
-                  <small>Best for saving progress and returning later.</small>
-                </button>
-                <button type="button" className="onboarding-auth-card" onClick={() => handleAuthChoice("/login")}>
-                  <strong>Log in</strong>
-                  <small>Continue with your existing NextStep account.</small>
-                </button>
-              </div>
-              <div className="onboarding-auth-actions">
-                <button type="button" className="onboarding-link-btn" onClick={handleGuestChoice}>Continue as Guest</button>
-                <p className="auth-helper">Guest mode works fully, but progress is temporary for this browser session.</p>
-              </div>
+              {!isAuthenticated && (
+                <>
+                  <p>You can create an account to save quiz results, dashboard progress, and future plans.</p>
+                  <div className="onboarding-benefits">
+                    <span className="signal-chip">Save your results</span>
+                    <span className="signal-chip">Track your progress</span>
+                    <span className="signal-chip">Return anytime</span>
+                  </div>
+                  <div className="onboarding-auth-grid">
+                    <button type="button" className="onboarding-auth-card onboarding-auth-card-primary" onClick={() => handleAuthChoice("/signup")}>
+                      <strong>Create account</strong>
+                      <small>Best for saving progress and returning later.</small>
+                    </button>
+                    <button type="button" className="onboarding-auth-card" onClick={() => handleAuthChoice("/login")}>
+                      <strong>Log in</strong>
+                      <small>Continue with your existing NextStep account.</small>
+                    </button>
+                  </div>
+                  <div className="onboarding-auth-actions">
+                    <button type="button" className="onboarding-link-btn" onClick={handleGuestChoice}>Continue as Guest</button>
+                    <p className="auth-helper">Guest mode works fully, but progress is temporary for this browser session.</p>
+                  </div>
+                </>
+              )}
+              {isAuthenticated && (
+                <div className="onboarding-auth-actions">
+                  <p className="feedback">You&apos;re signed in. Your progress will be saved to your account.</p>
+                  <button type="button" className="primary-btn" onClick={advance}>Continue</button>
+                </div>
+              )}
             </section>
           )}
 
