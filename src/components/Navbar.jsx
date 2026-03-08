@@ -31,7 +31,7 @@ export default function Navbar() {
           <div className="nextstep-logo" aria-label="NextStep">
             <svg
               className="nextstep-logo-mark"
-              viewBox="0 0 120 120"
+              viewBox="0 0 64 64"
               role="img"
               aria-hidden="true"
             >
@@ -43,7 +43,11 @@ export default function Navbar() {
               </defs>
               <path
                 fill="url(#nextstepMarkGradInline)"
-                d="M16 102h40c23 0 42-16 46-38h-22c-3 10-13 16-24 16H16v22Zm0-38h54V42H48V26h22l-18-22-30 38h24v22H16v0Zm0-22h18V20H16v22Z"
+                d="M4 54h18c16 0 30-10 35-24h-8C45 39 35 46 22 46H4v8Zm0-16h17c8 0 15-3 20-9h-9c-3 1-6 2-11 2H4v7Z"
+              />
+              <path
+                fill="url(#nextstepMarkGradInline)"
+                d="M20 18h13v-6l16 12-16 12v-6H20v-12Z"
               />
             </svg>
             <span className="nextstep-logo-text" aria-hidden="true">
