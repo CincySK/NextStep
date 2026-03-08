@@ -7,6 +7,9 @@ export default function ChatMessage({ role, text, timestamp, context, attachment
         <strong>{isUser ? "You" : "NextStep Tutor"}</strong>
         {timestamp && <span>{new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>}
       </header>
+      {!isUser && context?.assistantTag && (
+        <p className="chat-intent-badge">{context.assistantTag}</p>
+      )}
       <p>{text}</p>
       {attachments.length > 0 && (
         <div className="chat-attachment-list">
@@ -24,6 +27,7 @@ export default function ChatMessage({ role, text, timestamp, context, attachment
       {!isUser && context?.className && (
         <p className="chat-context-note">
           Context: {context.className}{context.assignmentTitle ? ` / ${context.assignmentTitle}` : ""}
+          {context?.usedClassContext ? " (Using class context)" : ""}
         </p>
       )}
       {!isUser && context?.attachmentNotes?.length > 0 && (

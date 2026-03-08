@@ -169,7 +169,8 @@ export default function ChatInterface({ initialClassId = "", initialAssignmentId
         useClassContext,
         attachmentFiles: attachments.map((item) => item.file),
         school,
-        user
+        user,
+        recentHistory: nextMessages.slice(-8)
       });
       const assistantMessage = {
         id: `assistant_${Date.now()}`,

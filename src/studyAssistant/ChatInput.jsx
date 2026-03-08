@@ -138,6 +138,9 @@ export default function ChatInput({
       >
         Drag and drop worksheet images, screenshots, or scanned PDFs here.
       </div>
+      <p className="chat-input-hint">
+        Try: simplify 6/8, explain photosynthesis, improve this sentence, or help with question 4a.
+      </p>
 
       <FileAttachmentPreview items={attachments} onRemove={removeAttachment} />
       {uploadError && <p className="auth-error">{uploadError}</p>}
