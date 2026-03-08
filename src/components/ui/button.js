@@ -18,3 +18,17 @@ export function buttonVariants({ variant = "default", size = "md", className = "
         : "ui-button-md";
   return cn(base, style, sizing, className);
 }
+
+export function Button({
+  variant = "default",
+  size = "md",
+  className = "",
+  children,
+  ...props
+}) {
+  return (
+    <button className={buttonVariants({ variant, size, className })} {...props}>
+      {children}
+    </button>
+  );
+}
