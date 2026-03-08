@@ -2,20 +2,23 @@ import { useMemo, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 import { useAuth } from "../auth/useAuth";
+import { hasGuestData } from "../auth/GuestSessionManager";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export default function LoginPage() {
-  const { signIn, isAuthenticated, isConfigured, authError } = useAuth();
+  const { signIn, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+  const [migrateGuestProgress, setMigrateGuestProgress] = useState(true);
   const resumeOnboarding = Boolean(location.state?.resumeOnboarding);
+  const showMigrationOption = isGuestMode && hasGuestData();
 
   const destination = useMemo(() => (resumeOnboarding ? "/" : (location.state?.from ?? "/dashboard")), [location.state?.from, resumeOnboarding]);
   const canSubmit = isValidEmail(values.email) && values.password.length > 0 && isConfigured;
@@ -60,7 +63,11 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await signIn({ email: values.email.trim(), password: values.password });
+      await signIn({
+        email: values.email.trim(),
+        password: values.password,
+        migrateGuestProgress
+      });
       navigate(destination, { replace: true, state: resumeOnboarding ? { resumeOnboarding: true } : {} });
     } catch (error) {
       setErrors({ global: error.message ?? "Could not sign in. Please try again." });
@@ -88,6 +95,16 @@ export default function LoginPage() {
       onSubmit={handleSubmit}
       footer={(
         <div className="auth-footer">
+          {showMigrationOption && (
+            <label className="auth-checkbox">
+              <input
+                type="checkbox"
+                checked={migrateGuestProgress}
+                onChange={(event) => setMigrateGuestProgress(event.target.checked)}
+              />
+              <span>Save my guest progress into this account</span>
+            </label>
+          )}
           {resumeOnboarding && <p className="auth-helper">You&apos;ll return to onboarding right after login.</p>}
           <Link to="/forgot-password">Forgot password?</Link>
           <p>Need an account? <Link to="/signup">Sign up</Link></p>

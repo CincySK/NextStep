@@ -211,10 +211,19 @@ export default function OnboardingContainer({ onComplete }) {
                 <span className="signal-chip">Track your progress</span>
                 <span className="signal-chip">Return anytime</span>
               </div>
+              <div className="onboarding-auth-grid">
+                <button type="button" className="onboarding-auth-card onboarding-auth-card-primary" onClick={() => handleAuthChoice("/signup")}>
+                  <strong>Create account</strong>
+                  <small>Best for saving progress and returning later.</small>
+                </button>
+                <button type="button" className="onboarding-auth-card" onClick={() => handleAuthChoice("/login")}>
+                  <strong>Log in</strong>
+                  <small>Continue with your existing NextStep account.</small>
+                </button>
+              </div>
               <div className="onboarding-auth-actions">
-                <button type="button" className="primary-btn" onClick={() => handleAuthChoice("/signup")}>Sign up / Create account</button>
-                <button type="button" className="secondary-btn" onClick={() => handleAuthChoice("/login")}>Log in</button>
                 <button type="button" className="onboarding-link-btn" onClick={handleGuestChoice}>Continue as Guest</button>
+                <p className="auth-helper">Guest mode works fully, but progress is temporary for this browser session.</p>
               </div>
             </section>
           )}

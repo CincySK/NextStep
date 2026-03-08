@@ -44,6 +44,7 @@ export default function Navbar() {
           )}
           {!isAuthenticated && isGuestMode && (
             <>
+              <span className="nav-guest-note">Guest session</span>
               <NavLink to="/signup" className="nav-link nav-link-cta">Create account</NavLink>
             </>
           )}

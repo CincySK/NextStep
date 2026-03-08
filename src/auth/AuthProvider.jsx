@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  async function signUp({ email, password, displayName }) {
+  async function signUp({ email, password, displayName, migrateGuestProgress = true }) {
     if (!supabase) throw new Error("Auth provider is not configured.");
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -83,8 +83,7 @@ export function AuthProvider({ children }) {
     const authedUserId = data?.session?.user?.id;
     if (authedUserId) {
       if (guestMode && hasGuestData()) {
-        const shouldMigrate = window.confirm("Save your current guest progress to this account?");
-        if (shouldMigrate) migrateGuestProgressToUser(authedUserId);
+        if (migrateGuestProgress) migrateGuestProgressToUser(authedUserId);
         clearGuestProgress();
       }
       setActiveUserId(authedUserId);
@@ -95,14 +94,13 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function signIn({ email, password }) {
+  async function signIn({ email, password, migrateGuestProgress = true }) {
     if (!supabase) throw new Error("Auth provider is not configured.");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw new Error(mapAuthError(error, "Could not sign in."));
     if (data?.user?.id) {
       if (guestMode && hasGuestData()) {
-        const shouldMigrate = window.confirm("Save your current guest progress to this account?");
-        if (shouldMigrate) migrateGuestProgressToUser(data.user.id);
+        if (migrateGuestProgress) migrateGuestProgressToUser(data.user.id);
         clearGuestProgress();
       }
       setActiveUserId(data.user.id);

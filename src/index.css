@@ -197,6 +197,14 @@ p {
   font-size: 0.9rem;
 }
 
+.auth-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
 .auth-footer a {
   color: #1d4ed8;
   font-weight: 600;
@@ -337,6 +345,16 @@ p {
 .nav-link-cta:hover {
   background: var(--primary-hover);
   color: #fff;
+}
+
+.nav-guest-note {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9a3412;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 999px;
+  padding: 0.32rem 0.6rem;
 }
 
 .user-menu {
@@ -1835,6 +1853,45 @@ p {
 .onboarding-auth-actions {
   display: grid;
   gap: 0.62rem;
+}
+
+.onboarding-auth-grid {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.onboarding-auth-card {
+  text-align: left;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  font: inherit;
+  color: #1e293b;
+  cursor: pointer;
+  display: grid;
+  gap: 0.25rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.onboarding-auth-card:hover {
+  border-color: #93c5fd;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.onboarding-auth-card strong {
+  font-size: 0.98rem;
+}
+
+.onboarding-auth-card small {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.onboarding-auth-card-primary {
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .onboarding-auth-actions .primary-btn,

@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 import FeatureCard from "../components/FeatureCard";
 import ProgressBadge from "../components/ProgressBadge";
 import { loadPersonalizationProfile } from "../personalization/personalizationStorage";
@@ -7,6 +8,7 @@ import { loadAppData } from "../storage";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isGuestMode, isAuthenticated } = useAuth();
   const [snapshot] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
 
@@ -71,6 +73,13 @@ export default function Home() {
 
   return (
     <>
+      {!isAuthenticated && isGuestMode && (
+        <section className="guest-reminder">
+          <p>You&apos;re exploring in guest mode. Create an account to save progress permanently.</p>
+          <button className="primary-btn" onClick={() => navigate("/signup")}>Create Account</button>
+        </section>
+      )}
+
       <section className={`hero card hero-accent-${profile?.accentMode ?? "default"}`}>
         <div>
           <p className="hero-kicker">{heroKicker}</p>

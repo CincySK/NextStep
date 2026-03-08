@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
 import { useAuth } from "../auth/useAuth";
+import { hasGuestData } from "../auth/GuestSessionManager";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 export default function SignupPage() {
-  const { signUp, isAuthenticated, isConfigured, authError } = useAuth();
+  const { signUp, isAuthenticated, isConfigured, authError, isGuestMode } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ displayName: "", email: "", password: "" });
@@ -16,7 +17,9 @@ export default function SignupPage() {
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [migrateGuestProgress, setMigrateGuestProgress] = useState(true);
   const resumeOnboarding = Boolean(location.state?.resumeOnboarding);
+  const showMigrationOption = isGuestMode && hasGuestData();
 
   if (isAuthenticated) return <Navigate to="/dashboard" replace />;
   const canSubmit = values.displayName.trim().length >= 2
@@ -72,7 +75,8 @@ export default function SignupPage() {
       const data = await signUp({
         displayName: values.displayName.trim(),
         email: values.email.trim(),
-        password: values.password
+        password: values.password,
+        migrateGuestProgress
       });
       if (data?.session?.user) {
         navigate(resumeOnboarding ? "/" : "/dashboard", {
@@ -108,6 +112,16 @@ export default function SignupPage() {
       onSubmit={handleSubmit}
       footer={(
         <div className="auth-footer">
+          {showMigrationOption && (
+            <label className="auth-checkbox">
+              <input
+                type="checkbox"
+                checked={migrateGuestProgress}
+                onChange={(event) => setMigrateGuestProgress(event.target.checked)}
+              />
+              <span>Save my guest progress into this account</span>
+            </label>
+          )}
           {resumeOnboarding && <p className="auth-helper">After signup, you&apos;ll continue onboarding.</p>}
           {success && <p className="feedback">{success}</p>}
           <p>Already have an account? <Link to="/login">Log in</Link></p>
