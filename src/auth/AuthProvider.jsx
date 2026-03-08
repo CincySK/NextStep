@@ -15,6 +15,7 @@ function mapAuthError(error, fallback) {
   if (/invalid login credentials/i.test(msg)) return "The email or password is incorrect.";
   if (/user already registered/i.test(msg)) return "An account with this email already exists.";
   if (/password/i.test(msg) && /at least/i.test(msg)) return "Password must be at least 8 characters.";
+  if (/access_denied|oauth|popup|provider/i.test(msg)) return "Google sign-in was canceled or blocked. Please try again.";
   return fallback ?? msg;
 }
 
@@ -183,7 +184,12 @@ export function AuthProvider({ children }) {
     const redirectTo = `${window.location.origin}${window.location.pathname}#/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo }
+      options: {
+        redirectTo,
+        queryParams: {
+          prompt: "select_account"
+        }
+      }
     });
     if (error) {
       clearOAuthIntent();
@@ -192,25 +198,31 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function completeOAuthLogin({ migrateGuestProgress = true } = {}) {
+  async function completeOAuthLogin({ migrateGuestProgress = true, requireRole = true } = {}) {
     if (!supabase) throw new Error("Auth provider is not configured.");
     const { data } = await supabase.auth.getSession();
     const oauthUser = data?.session?.user;
     if (!oauthUser?.id) throw new Error("No authenticated session found.");
 
     const intent = getOAuthIntent();
-    const requestedRole = normalizeRole(intent.role || selectedRole || "student");
+    const requestedRoleRaw = intent.role || selectedRole || "";
+    const requestedRole = requestedRoleRaw ? normalizeRole(requestedRoleRaw) : "";
     const existingRole = oauthUser?.user_metadata?.role ?? oauthUser?.app_metadata?.role ?? "";
 
-    let effectiveRole = normalizeRole(existingRole || requestedRole);
-    if (!existingRole) {
+    if (!existingRole && !requestedRole && requireRole) {
+      throw new Error("Role selection is required before continuing with Google.");
+    }
+
+    let effectiveRole = normalizeRole(existingRole || requestedRole || "student");
+    if (!existingRole && requestedRole) {
       const ensured = await ensureOAuthUserMetadata(oauthUser, requestedRole);
       effectiveRole = ensured.role;
     } else if (existingRole !== requestedRole) {
       setOAuthRoleNotice(
         `This account is already registered as ${effectiveRole}. NextStep kept your existing role.`
       );
-    } else {
+      await ensureOAuthUserMetadata(oauthUser, effectiveRole);
+    } else if (existingRole) {
       await ensureOAuthUserMetadata(oauthUser, effectiveRole);
     }
 

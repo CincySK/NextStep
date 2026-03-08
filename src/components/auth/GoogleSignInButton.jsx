@@ -6,7 +6,9 @@ export default function GoogleSignInButton({ onClick, loading = false, disabled 
       onClick={onClick}
       disabled={disabled || loading}
     >
-      <span className="google-icon" aria-hidden>G</span>
+      <span className="google-icon" aria-hidden>
+        <span className="g-red">G</span>
+      </span>
       <span>{loading ? "Redirecting..." : label}</span>
     </button>
   );

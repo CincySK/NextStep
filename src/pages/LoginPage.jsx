@@ -4,6 +4,7 @@ import AuthForm from "../components/auth/AuthForm";
 import GoogleSignInButton from "../components/auth/GoogleSignInButton";
 import { useAuth } from "../auth/useAuth";
 import { hasGuestData } from "../auth/GuestSessionManager";
+import { consumeOAuthError, consumeOAuthRoleNotice } from "../auth/oauthSession";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -14,7 +15,11 @@ export default function LoginPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(() => {
+    const oauthError = consumeOAuthError();
+    const roleNotice = consumeOAuthRoleNotice();
+    return { global: oauthError || roleNotice || "" };
+  });
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -132,6 +137,7 @@ export default function LoginPage() {
             onClick={handleGoogle}
             loading={googleLoading}
             disabled={!isConfigured}
+            label={`Continue with Google as ${selectedRole === "teacher" ? "Teacher" : "Student"}`}
           />
           <p>Need an account? <Link to="/signup">Sign up</Link></p>
         </div>

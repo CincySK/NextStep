@@ -236,8 +236,9 @@ p {
 
 .auth-footer {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.45rem;
   font-size: 0.9rem;
+  margin-top: 0.2rem;
 }
 
 .auth-divider {
@@ -269,10 +270,10 @@ p {
 .google-btn {
   width: 100%;
   border: 1px solid var(--border);
-  background: #fff;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfefe 100%);
   color: #0f172a;
   border-radius: 12px;
-  min-height: 44px;
+  min-height: 46px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -284,9 +285,9 @@ p {
 }
 
 .google-btn:hover {
-  border-color: #bfdbfe;
+  border-color: #cbd5e1;
   box-shadow: var(--shadow-sm);
-  background: #fbfdff;
+  background: #ffffff;
 }
 
 .google-icon {
@@ -300,6 +301,48 @@ p {
   color: #ea4335;
   font-size: 0.8rem;
   font-weight: 800;
+}
+
+.g-red {
+  color: #ea4335;
+}
+
+.google-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-callback-copy {
+  max-width: 52ch;
+  margin: 0 auto;
+}
+
+.oauth-migration-card {
+  margin-top: 0.2rem;
+  padding: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+}
+
+.oauth-migration-card h3 {
+  margin-bottom: 0.35rem;
+}
+
+.oauth-migration-card .cta-row {
+  margin-top: 0.75rem;
+}
+
+.oauth-error-card .cta-row {
+  margin-top: 0.55rem;
+}
+
+.oauth-success-note {
+  margin-top: 0.5rem;
+  padding: 0.7rem;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
 }
 
 .auth-checkbox {
