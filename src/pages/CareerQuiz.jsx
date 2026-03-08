@@ -2,12 +2,12 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "../components/quiz/ProgressBar";
 import QuizNavigation from "../components/quiz/QuizNavigation";
+import CareerReport from "../components/quiz/career-report/CareerReport";
 import { careerBaseQuestions, getDefaultCareerFollowUp } from "../quiz/career/careerQuestionFlow";
 import { analyzeCareerAnswerHistory, scoreCareerMatches, validateCareerRecommendations } from "../quiz/career/careerScoring";
 import { buildCareerResultsSummary } from "../quiz/career/careerResultsBuilder";
 import { generateCareerFollowUpQuestion } from "../services/aiCareerService";
 import { finalizeFirstQuizPersonalization } from "../personalization/profileLifecycle";
-import { loadPersonalizationProfile } from "../personalization/personalizationStorage";
 import { loadQuizSession, saveQuizSession, updateAppData } from "../storage";
 
 const CAREER_SESSION_VERSION = 2;
@@ -67,7 +67,6 @@ export default function CareerQuiz() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [compareSelection, setCompareSelection] = useState([]);
-  const personalizedProfile = loadPersonalizationProfile();
 
   const questionMap = useMemo(
     () => ({
@@ -282,7 +281,7 @@ export default function CareerQuiz() {
     : [];
 
   return (
-    <section className="quiz-flow-shell">
+    <section className={`quiz-flow-shell ${session.status === "results" ? "career-report-shell" : ""}`}>
       <header className="quiz-flow-top">
         <p className="quiz-flow-label">Career Exploration Quiz</p>
         <h1>Career Exploration: Important Steps</h1>
@@ -359,106 +358,15 @@ export default function CareerQuiz() {
       )}
 
       {session.status === "results" && session.report && (
-        <section className="quiz-results-card">
-          <p className="quiz-flow-label">Your Themes</p>
-          <h2>{session.report.title}</h2>
-          <p>{session.report.narrative}</p>
-          <p className="quiz-meta">AI synthesis source: {session.report.aiSource}</p>
-
-          <article className="result-block">
-            <h3>What Seems To Matter Most To You</h3>
-            <div className="chip-row">
-              {session.report.dominantThemes.map((theme) => (
-                <span key={theme} className="signal-chip">{theme}</span>
-              ))}
-            </div>
-          </article>
-
-          <article className="result-block">
-            <h3>Career Matches</h3>
-            <div className="recommend-grid">
-              {session.report.researchCards.map((career) => (
-                <article key={career.id} className="mini-card">
-                  <div className="section-header">
-                    <h4>{career.title}</h4>
-                    <span className="badge badge-default">Confidence {career.confidence}%</span>
-                  </div>
-                  <p>{career.whyItFits}</p>
-                  <ul className="list-clean">
-                    <li><strong>What they do:</strong> {career.whatPeopleDo.join(", ")}</li>
-                    <li><strong>Work environment:</strong> {career.workEnvironment}</li>
-                    <li><strong>Salary note:</strong> {career.salaryNote}</li>
-                    <li><strong>Outlook:</strong> {career.outlookNote}</li>
-                    <li><strong>Education:</strong> {career.educationPath}</li>
-                  </ul>
-                  <p className="mini-label">Related pathways: {career.relatedMajors.join(", ")}</p>
-                  <p className="feedback">{career.firstStep}</p>
-                  <button className="secondary-btn" onClick={() => toggleCompare(career.id)}>
-                    {compareSelection.includes(career.id) ? "Remove from Compare" : "Compare Career"}
-                  </button>
-                </article>
-              ))}
-            </div>
-          </article>
-
-          {compareCards.length === 2 && (
-            <article className="result-block">
-              <h3>Compare These Two Careers</h3>
-              <div className="compare-grid">
-                {compareCards.map((career) => (
-                  <article key={career.id} className="mini-card">
-                    <h4>{career.title}</h4>
-                    <p><strong>Environment:</strong> {career.workEnvironment}</p>
-                    <p><strong>Education:</strong> {career.educationPath}</p>
-                    <p><strong>Salary:</strong> {career.salaryNote}</p>
-                  </article>
-                ))}
-              </div>
-            </article>
-          )}
-
-          {session.report.excludedRecommendations.length > 0 && (
-            <article className="result-block">
-              <h3>Why Some Careers Were Not Shown</h3>
-              <ul className="list-clean">
-                {session.report.excludedRecommendations.slice(0, 4).map((item) => (
-                  <li key={item.career}><strong>{item.career}:</strong> {item.reason}</li>
-                ))}
-              </ul>
-            </article>
-          )}
-
-          <article className="result-block">
-            <h3>Questions To Ask a Counselor or Mentor</h3>
-            <ul className="list-clean">
-              {session.report.counselorQuestions.map((question) => (
-                <li key={question}>{question}</li>
-              ))}
-            </ul>
-          </article>
-
-          <article className="result-block">
-            <h3>What To Do Next</h3>
-            <ul className="list-clean">
-              {session.report.nextSteps.map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ul>
-          </article>
-
-          {personalizedProfile?.primaryPath === "career" && (
-            <p className="feedback">
-              Personalization unlocked. Your dashboard now prioritizes career modules and next steps based on these results.
-            </p>
-          )}
-
-          <div className="quiz-nav">
-            <button className="secondary-btn" onClick={startOver}>Retake Quiz</button>
-            <button className="primary-btn" onClick={() => navigate("/dashboard")}>
-              {personalizedProfile?.primaryPath === "career" ? "Go to My Personalized Dashboard" : "Save and Go to Dashboard"}
-            </button>
-          </div>
-        </section>
+        <CareerReport
+          report={session.report}
+          compareCards={compareCards}
+          compareSelection={compareSelection}
+          onToggleCompare={toggleCompare}
+          onRetake={startOver}
+          onExploreCollege={() => navigate("/college")}
+          onGoDashboard={() => navigate("/dashboard")}
+        />
       )}
 
       {error && <p className="feedback">{error}</p>}
