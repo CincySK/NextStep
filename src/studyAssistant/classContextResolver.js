@@ -8,14 +8,14 @@ function snippet(text) {
   return String(text ?? "").replace(/\s+/g, " ").trim().slice(0, 180);
 }
 
-export function resolveClassQuestion({ message, context }) {
+export function resolveHomeworkReference({ message, context }) {
   const ref = questionRefFromMessage(message);
   const chunks = context?.retrievedChunks ?? [];
 
   if (!context?.className || !context?.assignmentTitle) {
     return {
       needsClarification: true,
-      text: "I need class context for that. Select a class/assignment, or paste the exact question text."
+      text: "Which assignment is this from? Select your class and assignment, or paste the full question text."
     };
   }
 
@@ -34,8 +34,8 @@ export function resolveClassQuestion({ message, context }) {
     text: [
       `Using class context: ${context.className} / ${context.assignmentTitle}.`,
       ref ? `Matched question ${ref}.` : "Matched the closest assignment section.",
-      `Relevant prompt: ${snippet(chosen?.textContent)}`,
-      "Tell me your stuck step, and I will guide just that step."
+      `Relevant assignment text: ${snippet(chosen?.textContent)}`,
+      "Tell me the exact step where you got stuck, and I will guide that step only."
     ].join("\n"),
     usedClassContext: true
   };

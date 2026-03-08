@@ -16,5 +16,13 @@ export function buildClarifyingQuestion(message, recentHistory = []) {
     return "Which exact part is confusing: the setup, one step, or the final answer?";
   }
 
+  if (/^that one$|^explain that$|^that$/i.test(trimmed)) {
+    const lastUser = [...recentHistory].reverse().find((item) => item.role === "user" && item.text !== trimmed);
+    if (lastUser?.text) {
+      return `Do you want me to explain your previous question: "${lastUser.text.slice(0, 80)}${lastUser.text.length > 80 ? "..." : ""}"?`;
+    }
+    return "Tell me the exact question you want explained.";
+  }
+
   return "Please share the exact question text so I can give a direct answer.";
 }

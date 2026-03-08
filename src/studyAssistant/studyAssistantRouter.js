@@ -1,7 +1,9 @@
-import { handleAlgebra, handleBasicMath, inferFollowUpMath } from "./mathHelper";
-import { handleWritingHelp } from "./writingHelper";
-import { handleConceptExplanation } from "./conceptHelper";
-import { resolveClassQuestion } from "./classContextResolver";
+import { explainFractionDecimalPercent, handleBasicMath, inferFollowUpMath } from "./mathHelper";
+import { solveSimpleAlgebra } from "./algebraHelper";
+import { explainScienceConcept } from "./scienceConceptHelper";
+import { fixGrammarSentence } from "./grammarHelper";
+import { buildEssayStructureResponse, handleWritingHelp } from "./writingHelper";
+import { resolveHomeworkReference } from "./classContextResolver";
 import { buildClarifyingQuestion } from "./clarificationHelper";
 import { detectQuestionType } from "./questionTypeDetector";
 
@@ -22,7 +24,7 @@ function normalize(message) {
   return String(message ?? "").trim();
 }
 
-export function routeLocalAssistant({
+export function handleStudyQuestion({
   message,
   recentHistory = [],
   useClassContext = true,
@@ -50,37 +52,52 @@ export function routeLocalAssistant({
 
   const followUpMath = inferFollowUpMath(message, recentHistory);
   if (followUpMath) {
-    return { ...followUpMath, assistantTag: "Math Help" };
+    return { ...followUpMath, assistantTag: "Fraction Help" };
   }
 
   const type = detectQuestionType(message, recentHistory, useClassContext);
 
-  if (type === "basic_math") {
+  if (type === "fractions_decimals_percent") {
+    const result = explainFractionDecimalPercent(message);
+    if (result) return { ...result, assistantTag: "Fraction Help" };
+  }
+
+  if (type === "math_basic") {
     const result = handleBasicMath(message);
     if (result) return { ...result, assistantTag: "Math Help" };
   }
 
-  if (type === "algebra") {
-    const result = handleAlgebra(message);
+  if (type === "math_algebra") {
+    const result = solveSimpleAlgebra(message);
     if (result) return { ...result, assistantTag: "Algebra Help" };
   }
 
-  if (type === "writing") {
+  if (type === "grammar_fix") {
+    const result = fixGrammarSentence(message);
+    if (result) return { ...result, assistantTag: "Grammar Fix" };
+  }
+
+  if (type === "essay_structure") {
+    const result = buildEssayStructureResponse(message);
+    if (result) return { ...result, assistantTag: "Essay Structure" };
+  }
+
+  if (type === "writing_help") {
     const result = handleWritingHelp(message);
     return { ...result, assistantTag: "Writing Help" };
   }
 
-  if (type === "concept") {
-    const result = handleConceptExplanation(message);
-    return { ...result, assistantTag: "Concept Help" };
+  if (type === "science_concept") {
+    const result = explainScienceConcept(message);
+    return { ...result, assistantTag: "Science Concept" };
   }
 
-  if (type === "class") {
-    const result = resolveClassQuestion({ message, context });
+  if (type === "homework_reference") {
+    const result = resolveHomeworkReference({ message, context });
     return { ...result, assistantTag: "Class Context" };
   }
 
-  if (type === "study") {
+  if (type === "study_help") {
     return buildStudyHelp();
   }
 
@@ -88,4 +105,8 @@ export function routeLocalAssistant({
     text: buildClarifyingQuestion(message, recentHistory),
     assistantTag: "Clarification"
   };
+}
+
+export function routeLocalAssistant(input) {
+  return handleStudyQuestion(input);
 }

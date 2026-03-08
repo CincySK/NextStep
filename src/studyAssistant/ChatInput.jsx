@@ -3,10 +3,10 @@ import { validateUploadFile } from "../documents/FileTypeDetector";
 import FileAttachmentPreview from "./FileAttachmentPreview";
 
 const suggestions = [
-  "Help me with math",
-  "Improve my essay",
-  "Explain this concept",
-  "Study for a test"
+  "simplify 6/8",
+  "explain photosynthesis",
+  "improve this sentence: I goed to the store",
+  "help with question 4a"
 ];
 
 function createAttachment(file) {
@@ -139,7 +139,7 @@ export default function ChatInput({
         Drag and drop worksheet images, screenshots, or scanned PDFs here.
       </div>
       <p className="chat-input-hint">
-        Try: simplify 6/8, explain photosynthesis, improve this sentence, or help with question 4a.
+        Try asking: simplify 6/8, explain photosynthesis, improve this sentence, or help with question 4a.
       </p>
 
       <FileAttachmentPreview items={attachments} onRemove={removeAttachment} />

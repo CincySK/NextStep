@@ -38,7 +38,7 @@ function normalizeWords(input) {
     .trim();
 }
 
-function parseSimpleBinaryExpression(input) {
+export function parseMathExpression(input) {
   const text = normalizeWords(input).replace(/\s/g, "");
   const match = text.match(/^(-?\d+(?:\.\d+)?)([+\-*/])(-?\d+(?:\.\d+)?)$/);
   if (!match) return null;
@@ -125,44 +125,6 @@ function parseSimplifyFraction(input) {
   return { numerator, denominator, simplified: simplifyFraction(numerator, denominator) };
 }
 
-function parseLinearEquation(input) {
-  const compact = String(input ?? "")
-    .toLowerCase()
-    .replace(/^solve\s*/i, "")
-    .replace(/\?+$/g, "")
-    .replace(/\s+/g, "");
-  const match = compact.match(/^([+\-]?\d*\.?\d*)x([+\-]\d+\.?\d*)?=([+\-]?\d+\.?\d*)$/);
-  if (!match) return null;
-
-  const coeffRaw = match[1];
-  const bRaw = match[2] ?? "+0";
-  const rhsRaw = match[3];
-
-  const a = coeffRaw === "" || coeffRaw === "+" ? 1 : coeffRaw === "-" ? -1 : Number(coeffRaw);
-  const b = Number(bRaw);
-  const c = Number(rhsRaw);
-  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) return null;
-  return { a, b, c };
-}
-
-export function handleAlgebra(input) {
-  const eq = parseLinearEquation(input);
-  if (!eq) return null;
-  if (eq.a === 0) return { text: "This equation does not have a single x solution because the x coefficient is 0." };
-  const rhsAfterMove = eq.c - eq.b;
-  const x = rhsAfterMove / eq.a;
-  return {
-    text: buildMathOutput(
-      `x = ${formatNumber(x)}`,
-      [
-        `Start with ${formatNumber(eq.a)}x ${eq.b >= 0 ? "+" : "-"} ${formatNumber(Math.abs(eq.b))} = ${formatNumber(eq.c)}`,
-        `Move the constant: ${formatNumber(eq.a)}x = ${formatNumber(rhsAfterMove)}`,
-        `Divide by ${formatNumber(eq.a)}`
-      ]
-    )
-  };
-}
-
 export function handleBasicMath(input) {
   const raw = String(input ?? "").trim();
   if (!raw) return null;
@@ -173,7 +135,10 @@ export function handleBasicMath(input) {
     return {
       text: buildMathOutput(
         `${simplify.simplified.numerator}/${simplify.simplified.denominator}`,
-        [`${simplify.numerator}/${simplify.denominator} simplified by dividing top and bottom by ${gcd(simplify.numerator, simplify.denominator)}.`]
+        [
+          `${simplify.numerator}/${simplify.denominator} simplified by dividing numerator and denominator by ${gcd(simplify.numerator, simplify.denominator)}.`,
+          `Decimal form: ${formatNumber(simplify.numerator / simplify.denominator)}`
+        ]
       )
     };
   }
@@ -202,13 +167,14 @@ export function handleBasicMath(input) {
     };
   }
 
-  const binary = parseSimpleBinaryExpression(raw);
-  if (binary) {
-    if (binary.error) return { text: binary.error };
+  const parsed = parseMathExpression(raw);
+  if (parsed) {
+    const value = parsed;
+    if (value.error) return { text: value.error };
     return {
       text: buildMathOutput(
-        formatNumber(binary.value),
-        [`${formatNumber(binary.left)} ${binary.op} ${formatNumber(binary.right)} = ${formatNumber(binary.value)}`]
+        formatNumber(value.value),
+        [`${formatNumber(value.left)} ${value.op} ${formatNumber(value.right)} = ${formatNumber(value.value)}`]
       )
     };
   }
@@ -226,6 +192,71 @@ export function handleBasicMath(input) {
       text: buildMathOutput(
         formatNumber(n),
         [`If you want a calculation, try: ${formatNumber(n)} / 2 or ${formatNumber(n)}% of 50.`]
+      )
+    };
+  }
+
+  return null;
+}
+
+export function explainFractionDecimalPercent(input) {
+  const raw = String(input ?? "").trim();
+  if (!raw) return null;
+
+  const simplify = parseSimplifyFraction(raw);
+  if (simplify) {
+    if (simplify.error) return { text: simplify.error };
+    return {
+      text: buildMathOutput(
+        `${simplify.simplified.numerator}/${simplify.simplified.denominator}`,
+        [
+          `Simplified fraction: ${simplify.simplified.numerator}/${simplify.simplified.denominator}`,
+          `Decimal form: ${formatNumber(simplify.numerator / simplify.denominator)}`,
+          `Percent form: ${formatNumber((simplify.numerator / simplify.denominator) * 100)}%`
+        ]
+      )
+    };
+  }
+
+  const fraction = parseFraction(raw);
+  if (fraction) {
+    if (fraction.error) return { text: fraction.error };
+    return { text: fractionExplainer(fraction.numerator, fraction.denominator) };
+  }
+
+  const percentOf = parsePercentOf(raw);
+  if (percentOf) {
+    return {
+      text: buildMathOutput(
+        formatNumber(percentOf.value),
+        [
+          `${formatNumber(percentOf.percent)}% of ${formatNumber(percentOf.base)} = ${formatNumber(percentOf.value)}`,
+          `Converted: ${formatNumber(percentOf.percent)}% = ${formatNumber(percentOf.percent / 100)}`
+        ]
+      )
+    };
+  }
+
+  const asFraction = parseDecimalAsFraction(raw);
+  if (asFraction) {
+    const value = raw.match(/-?\d+(?:\.\d+)?/)?.[0] ?? "That decimal";
+    return {
+      text: buildMathOutput(
+        `${asFraction.numerator}/${asFraction.denominator}`,
+        [`${value} as a fraction in simplest form is ${asFraction.numerator}/${asFraction.denominator}.`]
+      )
+    };
+  }
+
+  if (/^-?\d+(?:\.\d+)?%$/.test(raw)) {
+    const n = Number(raw.replace("%", ""));
+    return {
+      text: buildMathOutput(
+        formatNumber(n / 100),
+        [
+          `${formatNumber(n)}% = ${formatNumber(n / 100)} as a decimal.`,
+          `${formatNumber(n)}% = ${formatNumber(n)}/100 as a fraction idea.`
+        ]
       )
     };
   }
