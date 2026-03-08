@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import RoleSelection from "./pages/RoleSelection";
 import StudentDashboard from "./pages/StudentDashboard";
 import TeacherDashboardDemo from "./pages/TeacherDashboardDemo";
@@ -27,7 +27,7 @@ const placeholderIcon = (label) => (
   </div>
 );
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: "/",
     Component: RoleSelection
