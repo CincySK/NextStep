@@ -6791,3 +6791,287 @@ p {
     max-width: 100%;
   }
 }
+
+/* Functional app UI integration (Figma-style visuals, logic preserved) */
+.top-nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  backdrop-filter: blur(10px) saturate(150%);
+  background: color-mix(in oklab, var(--card) 90%, #fff);
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 84%, #fff);
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.07);
+}
+
+.top-nav {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand-wrap {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.nav-link {
+  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.nav-link:hover {
+  background: color-mix(in oklab, var(--muted) 75%, white);
+  transform: translateY(-1px);
+}
+
+.nav-link-active {
+  color: var(--primary-foreground);
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.24);
+}
+
+.nav-link-auth {
+  border: 1px solid var(--border);
+}
+
+.nav-link-cta {
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.2);
+}
+
+.section-card.module-card,
+.result-card,
+.lesson-note,
+.quiz-results-card {
+  border: 1px solid color-mix(in oklab, var(--border) 82%, white);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fff 0%, #fcfdff 100%);
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+}
+
+.section-header {
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed color-mix(in oklab, var(--border) 74%, white);
+}
+
+.badge {
+  border-radius: 14px;
+  border: 1px solid color-mix(in oklab, var(--border) 70%, white);
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.05);
+}
+
+.feature-card,
+.mini-card,
+.look-card {
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff 0%, #fcfdff 100%);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.feature-card:hover,
+.mini-card:hover,
+.look-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.09);
+}
+
+.primary-btn,
+.secondary-btn,
+.mini-action {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  color: var(--primary-foreground);
+  box-shadow: 0 12px 20px rgba(37, 99, 235, 0.22);
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.secondary-btn {
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+.secondary-btn:hover {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+.quiz-flow-shell {
+  width: min(840px, 100%);
+  gap: 1.2rem;
+}
+
+.quiz-flow-top {
+  padding: 1.2rem 1.3rem;
+  border-radius: 18px;
+  border: 1px solid color-mix(in oklab, var(--border) 76%, white);
+  background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.09), transparent 42%),
+    linear-gradient(180deg, #ffffff, #f9fbff);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+.quiz-stage,
+.question-card,
+.quiz-flow-card {
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+
+.quiz-choice,
+.option-btn {
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.quiz-choice:hover,
+.option-btn:hover {
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.1);
+}
+
+.quiz-choice-selected,
+.option-selected {
+  border-color: var(--primary);
+  background: color-mix(in oklab, #eff6ff 84%, white);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.25);
+}
+
+.exercise-card {
+  border: 1px solid color-mix(in oklab, var(--border) 76%, white);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.exercise-head {
+  border-radius: 16px;
+}
+
+.field input,
+.quiz-text-input,
+.auth-field input,
+.chat-input {
+  border: 1.5px solid var(--input);
+  border-radius: 12px;
+  background: var(--input-background);
+}
+
+.field input:focus-visible,
+.quiz-text-input:focus-visible,
+.auth-field input:focus-visible,
+.chat-input:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.2);
+  outline-offset: 1px;
+}
+
+.study-assistant-shell {
+  gap: 1rem;
+}
+
+.chat-panel {
+  border-radius: 20px;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, white);
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.chat-history {
+  background: radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 40%),
+    linear-gradient(180deg, #fcfdff 0%, #f8fbff 100%);
+}
+
+.chat-message {
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.chat-message-user {
+  background: linear-gradient(135deg, #eaf3ff 0%, #eff6ff 100%);
+}
+
+.chat-message-assistant {
+  background: linear-gradient(180deg, #fff 0%, #fcfdff 100%);
+}
+
+.auth-card {
+  border: 1px solid color-mix(in oklab, var(--border) 78%, white);
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fff 0%, #fcfdff 100%);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+}
+
+@media (max-width: 980px) {
+  .top-nav {
+    min-height: 64px;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .nav-links {
+    gap: 0.2rem;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .nav-links {
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quiz-flow-top {
+    padding: 1rem;
+  }
+}

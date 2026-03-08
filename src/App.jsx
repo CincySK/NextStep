@@ -132,10 +132,13 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/career" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
+          <Route path="/career-path" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
           <Route path="/career/quiz" element={<StudentOnlyGate><CareerQuiz /></StudentOnlyGate>} />
           <Route path="/college" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
+          <Route path="/college-match" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
           <Route path="/college/quiz" element={<StudentOnlyGate><CollegeQuiz /></StudentOnlyGate>} />
           <Route path="/money" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
+          <Route path="/money-skills" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
           <Route path="/auth/role" element={<RoleSelectionPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route
@@ -156,6 +159,14 @@ export default function App() {
           />
           <Route
             path="/classes/:classId"
+            element={(
+              <ProtectedRoute>
+                <ClassDetailPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/class/:classId"
             element={(
               <ProtectedRoute>
                 <ClassDetailPage />
