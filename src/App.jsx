@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import ProtectedRoute from "./auth/ProtectedRoute";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import OnboardingContainer from "./components/onboarding/OnboardingContainer";
@@ -12,6 +13,10 @@ import CollegeMatch from "./pages/CollegeMatch";
 import CollegeQuiz from "./pages/CollegeQuiz";
 import MoneySkills from "./pages/MoneySkills";
 import Dashboard from "./pages/Dashboard";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   const location = useLocation();
@@ -30,7 +35,11 @@ export default function App() {
       "/college": "NextStep | College Match Module",
       "/college/quiz": "NextStep | College Match Quiz",
       "/money": "NextStep | Money Skills Module",
-      "/dashboard": "NextStep | Learning Hub"
+      "/dashboard": "NextStep | Learning Hub",
+      "/login": "NextStep | Log In",
+      "/signup": "NextStep | Sign Up",
+      "/forgot-password": "NextStep | Reset Password",
+      "/profile": "NextStep | Profile"
     };
     document.title = titles[location.pathname] ?? "NextStep | Student Future Planning";
   }, [location.pathname]);
@@ -60,6 +69,8 @@ export default function App() {
     navigate("/");
   }
 
+  const isAuthScreen = ["/login", "/signup", "/forgot-password"].includes(location.pathname);
+
   return (
     <div className="app-shell">
       <Navbar />
@@ -71,12 +82,30 @@ export default function App() {
           <Route path="/college" element={<CollegeMatch />} />
           <Route path="/college/quiz" element={<CollegeQuiz />} />
           <Route path="/money" element={<MoneySkills />} />
-          <Route path="/dashboard" element={<Dashboard onRestartOnboarding={handleRestartOnboarding} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route
+            path="/dashboard"
+            element={(
+              <ProtectedRoute>
+                <Dashboard onRestartOnboarding={handleRestartOnboarding} />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/profile"
+            element={(
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            )}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <Footer />
-      {showOnboarding && <OnboardingContainer onComplete={handleOnboardingComplete} />}
+      {showOnboarding && !isAuthScreen && <OnboardingContainer onComplete={handleOnboardingComplete} />}
     </div>
   );
 }

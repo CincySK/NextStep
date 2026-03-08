@@ -1,3 +1,5 @@
+import { getAnonymousStorageKey, getScopedStorageKey } from "./auth/storageScope";
+
 const KEY = "nextstep-data-v1";
 const LEGACY_KEY = "fyf-data-v1";
 
@@ -28,7 +30,10 @@ const defaultState = {
 
 export function loadAppData() {
   try {
-    const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY);
+    const raw = localStorage.getItem(getScopedStorageKey(KEY))
+      ?? localStorage.getItem(getScopedStorageKey(LEGACY_KEY))
+      ?? localStorage.getItem(getAnonymousStorageKey(KEY))
+      ?? localStorage.getItem(getAnonymousStorageKey(LEGACY_KEY));
     if (!raw) return defaultState;
     return { ...defaultState, ...JSON.parse(raw) };
   } catch {
@@ -37,7 +42,7 @@ export function loadAppData() {
 }
 
 export function saveAppData(next) {
-  localStorage.setItem(KEY, JSON.stringify(next));
+  localStorage.setItem(getScopedStorageKey(KEY), JSON.stringify(next));
 }
 
 export function updateAppData(updater) {
@@ -69,4 +74,20 @@ export function clearQuizSession(type) {
       [type]: null
     }
   }));
+}
+
+export function loadUserProgress(userId) {
+  try {
+    const raw = localStorage.getItem(getScopedStorageKey(KEY, userId))
+      ?? localStorage.getItem(getScopedStorageKey(LEGACY_KEY, userId));
+    if (!raw) return { ...defaultState };
+    return { ...defaultState, ...JSON.parse(raw) };
+  } catch {
+    return { ...defaultState };
+  }
+}
+
+export function saveUserProgress(userId, data) {
+  if (!userId) return;
+  localStorage.setItem(getScopedStorageKey(KEY, userId), JSON.stringify(data));
 }

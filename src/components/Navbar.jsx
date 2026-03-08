@@ -1,14 +1,17 @@
 import { NavLink } from "react-router-dom";
+import UserMenu from "./auth/UserMenu";
+import { useAuth } from "../auth/useAuth";
 
 const links = [
   { to: "/", label: "Home" },
   { to: "/career", label: "Career Path" },
   { to: "/college", label: "College Match" },
-  { to: "/money", label: "Money Skills" },
-  { to: "/dashboard", label: "Dashboard" }
+  { to: "/money", label: "Money Skills" }
 ];
 
 export default function Navbar() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <header className="top-nav-wrap">
       <nav className="top-nav container">
@@ -28,6 +31,18 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          {isAuthenticated && (
+            <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
+              Dashboard
+            </NavLink>
+          )}
+          {!isAuthenticated && (
+            <>
+              <NavLink to="/login" className="nav-link nav-link-auth">Log in</NavLink>
+              <NavLink to="/signup" className="nav-link nav-link-cta">Sign up</NavLink>
+            </>
+          )}
+          {isAuthenticated && <UserMenu />}
         </div>
       </nav>
     </header>
