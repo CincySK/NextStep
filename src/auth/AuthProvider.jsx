@@ -5,6 +5,7 @@ import { isSupabaseConfigured, supabase } from "./supabaseClient";
 import { hasGuestData, isGuestMode, startGuestMode, stopGuestMode } from "./GuestSessionManager";
 import { clearGuestProgress, migrateGuestProgressToUser } from "../session/ProgressMigrationService";
 import { clearSelectedRole, getSelectedRole, setSelectedRole } from "./roleSession";
+import { clearOAuthIntent, getOAuthIntent, setOAuthError, setOAuthIntent, setOAuthRoleNotice } from "./oauthSession";
 
 const AuthContext = createContext(null);
 
@@ -19,6 +20,26 @@ function mapAuthError(error, fallback) {
 
 function normalizeRole(value) {
   return value === "teacher" ? "teacher" : "student";
+}
+
+async function ensureOAuthUserMetadata(user, fallbackRole = "student") {
+  if (!supabase || !user) return { role: normalizeRole(fallbackRole) };
+  const roleInMetadata = user?.user_metadata?.role ?? user?.app_metadata?.role ?? "";
+  const authProvider = user?.app_metadata?.provider ?? "email";
+  const role = normalizeRole(roleInMetadata || fallbackRole);
+
+  const nextData = {
+    ...user.user_metadata,
+    role,
+    authProvider
+  };
+
+  const needsUpdate = user?.user_metadata?.role !== role || user?.user_metadata?.authProvider !== authProvider;
+  if (needsUpdate) {
+    await supabase.auth.updateUser({ data: nextData });
+  }
+
+  return { role };
 }
 
 export function AuthProvider({ children }) {
@@ -89,7 +110,7 @@ export function AuthProvider({ children }) {
       email,
       password,
       options: {
-        data: { display_name: displayName, role: normalizedRole }
+        data: { display_name: displayName, role: normalizedRole, authProvider: "email" }
       }
     });
     if (error) throw new Error(mapAuthError(error, "Could not create account."));
@@ -154,6 +175,64 @@ export function AuthProvider({ children }) {
     setSelectedRoleState("");
   }
 
+  async function signInWithGoogle({ role = "student", resumeOnboarding = false }) {
+    if (!supabase) throw new Error("Auth provider is not configured.");
+    const normalizedRole = normalizeRole(role || selectedRole || "student");
+    setOAuthIntent({ role: normalizedRole, resumeOnboarding });
+
+    const redirectTo = `${window.location.origin}${window.location.pathname}#/auth/callback`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo }
+    });
+    if (error) {
+      clearOAuthIntent();
+      setOAuthError(error.message ?? "Google sign-in failed.");
+      throw new Error(mapAuthError(error, "Google sign-in failed."));
+    }
+  }
+
+  async function completeOAuthLogin({ migrateGuestProgress = true } = {}) {
+    if (!supabase) throw new Error("Auth provider is not configured.");
+    const { data } = await supabase.auth.getSession();
+    const oauthUser = data?.session?.user;
+    if (!oauthUser?.id) throw new Error("No authenticated session found.");
+
+    const intent = getOAuthIntent();
+    const requestedRole = normalizeRole(intent.role || selectedRole || "student");
+    const existingRole = oauthUser?.user_metadata?.role ?? oauthUser?.app_metadata?.role ?? "";
+
+    let effectiveRole = normalizeRole(existingRole || requestedRole);
+    if (!existingRole) {
+      const ensured = await ensureOAuthUserMetadata(oauthUser, requestedRole);
+      effectiveRole = ensured.role;
+    } else if (existingRole !== requestedRole) {
+      setOAuthRoleNotice(
+        `This account is already registered as ${effectiveRole}. NextStep kept your existing role.`
+      );
+    } else {
+      await ensureOAuthUserMetadata(oauthUser, effectiveRole);
+    }
+
+    if (guestMode && hasGuestData()) {
+      if (migrateGuestProgress) migrateGuestProgressToUser(oauthUser.id);
+      clearGuestProgress();
+      stopGuestMode();
+      setGuestMode(false);
+    }
+
+    setSelectedRole(effectiveRole);
+    setSelectedRoleState(effectiveRole);
+    setActiveUserId(oauthUser.id);
+    migrateAnonymousProgressToUser(oauthUser.id);
+    clearOAuthIntent();
+
+    return {
+      role: effectiveRole,
+      resumeOnboarding: intent.resumeOnboarding
+    };
+  }
+
   async function resetPassword(email) {
     if (!supabase) throw new Error("Auth provider is not configured.");
     const { error } = await supabase.auth.resetPasswordForEmail(email);
@@ -203,6 +282,8 @@ export function AuthProvider({ children }) {
       chooseRole,
       signUp,
       signIn,
+      signInWithGoogle,
+      completeOAuthLogin,
       signOut,
       resetPassword,
       updateDisplayName,

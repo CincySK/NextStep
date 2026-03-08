@@ -3,6 +3,7 @@ import { useAuth } from "../auth/useAuth";
 
 export default function ProfilePage() {
   const { user, updateDisplayName, userRole } = useAuth();
+  const provider = user?.user_metadata?.authProvider ?? user?.app_metadata?.provider ?? "email";
   const [displayName, setDisplayName] = useState(user?.user_metadata?.display_name ?? "");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -39,6 +40,7 @@ export default function ProfilePage() {
       <article className="mini-card">
         <p><strong>Email:</strong> {user?.email}</p>
         <p><strong>Role:</strong> {userRole === "teacher" ? "Teacher" : "Student"}</p>
+        <p><strong>Provider:</strong> {provider}</p>
         <p><strong>Joined:</strong> {user?.created_at ? new Date(user.created_at).toLocaleDateString() : "Unknown"}</p>
       </article>
 

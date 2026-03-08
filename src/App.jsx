@@ -32,6 +32,7 @@ import TeacherPage from "./pages/TeacherPage";
 import RoleSelectionPage from "./pages/RoleSelectionPage";
 import RoleAwareDashboard from "./pages/RoleAwareDashboard";
 import { useAuth } from "./auth/useAuth";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 
 export default function App() {
   const { isAuthenticated, userRole } = useAuth();
@@ -58,6 +59,7 @@ export default function App() {
       "/login": "NextStep | Log In",
       "/signup": "NextStep | Sign Up",
       "/auth/role": "NextStep | Choose Role",
+      "/auth/callback": "NextStep | Completing Sign In",
       "/forgot-password": "NextStep | Reset Password",
       "/profile": "NextStep | Profile",
       "/study-assistant": "NextStep | Study Assistant",
@@ -115,7 +117,7 @@ export default function App() {
     navigate("/");
   }
 
-  const isAuthScreen = ["/auth/role", "/login", "/signup", "/forgot-password"].includes(location.pathname);
+  const isAuthScreen = ["/auth/role", "/auth/callback", "/login", "/signup", "/forgot-password"].includes(location.pathname);
 
   useEffect(() => {
     if (!location.state?.resumeOnboarding) return;
@@ -135,6 +137,7 @@ export default function App() {
           <Route path="/college/quiz" element={<StudentOnlyGate><CollegeQuiz /></StudentOnlyGate>} />
           <Route path="/money" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
           <Route path="/auth/role" element={<RoleSelectionPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route
             path="/study-assistant"
             element={(

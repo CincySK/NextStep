@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AuthForm from "../components/auth/AuthForm";
+import GoogleSignInButton from "../components/auth/GoogleSignInButton";
 import { useAuth } from "../auth/useAuth";
 import { hasGuestData } from "../auth/GuestSessionManager";
 
@@ -9,13 +10,14 @@ function isValidEmail(email) {
 }
 
 export default function SignupPage() {
-  const { signUp, isAuthenticated, isConfigured, authError, isGuestMode, selectedRole } = useAuth();
+  const { signUp, signInWithGoogle, isAuthenticated, isConfigured, authError, isGuestMode, selectedRole } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [values, setValues] = useState({ displayName: "", email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [migrateGuestProgress, setMigrateGuestProgress] = useState(true);
   const resumeOnboarding = Boolean(location.state?.resumeOnboarding);
@@ -95,6 +97,20 @@ export default function SignupPage() {
     }
   }
 
+  async function handleGoogle() {
+    setErrors((prev) => ({ ...prev, global: "" }));
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle({
+        role: selectedRole,
+        resumeOnboarding
+      });
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, global: error.message ?? "Google sign-in failed." }));
+      setGoogleLoading(false);
+    }
+  }
+
   return (
     <AuthForm
       mode="signup"
@@ -128,6 +144,12 @@ export default function SignupPage() {
           {resumeOnboarding && <p className="auth-helper">After signup, you&apos;ll continue onboarding.</p>}
           {success && <p className="feedback">{success}</p>}
           <p>Wrong role? <Link to="/auth/role">Switch role</Link></p>
+          <div className="auth-divider"><span>or</span></div>
+          <GoogleSignInButton
+            onClick={handleGoogle}
+            loading={googleLoading}
+            disabled={!isConfigured}
+          />
           <p>Already have an account? <Link to="/login">Log in</Link></p>
         </div>
       )}
