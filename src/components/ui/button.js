@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "./utils";
 
 export function buttonVariants({ variant = "default", size = "md", className = "" } = {}) {
@@ -26,9 +27,9 @@ export function Button({
   children,
   ...props
 }) {
-  return (
-    <button className={buttonVariants({ variant, size, className })} {...props}>
-      {children}
-    </button>
+  return React.createElement(
+    "button",
+    { className: buttonVariants({ variant, size, className }), ...props },
+    children
   );
 }
