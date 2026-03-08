@@ -347,16 +347,6 @@ p {
   color: #fff;
 }
 
-.nav-guest-note {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #9a3412;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  border-radius: 999px;
-  padding: 0.32rem 0.6rem;
-}
-
 .user-menu {
   position: relative;
 }
