@@ -7278,6 +7278,37 @@ p {
   min-width: 220px;
 }
 
+.brand-wrap-link {
+  text-decoration: none;
+}
+
+.nextstep-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nextstep-logo-mark {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.nextstep-logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.nextstep-logo-next {
+  color: #2f2aa8;
+}
+
+.nextstep-logo-step {
+  color: #0891b2;
+}
+
 .brand-logo-image {
   height: 54px;
   width: auto;
@@ -7286,6 +7317,15 @@ p {
 }
 
 @media (max-width: 900px) {
+  .nextstep-logo-mark {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nextstep-logo-text {
+    font-size: 1.55rem;
+  }
+
   .brand-logo-image {
     height: 44px;
   }

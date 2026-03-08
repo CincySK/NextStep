@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import UserMenu from "./auth/UserMenu";
 import { useAuth } from "../auth/useAuth";
+import NextStepLogo from "./NextStepLogo";
 
 const studentLinks = [
   { to: "/", label: "Home" },
@@ -27,13 +28,9 @@ export default function Navbar() {
   return (
     <header className="top-nav-wrap">
       <nav className="top-nav container">
-        <div className="brand-wrap">
-          <img
-            src="/nextstep-logo.png"
-            alt="NextStep"
-            className="brand-logo-image"
-          />
-        </div>
+        <NavLink to="/" className="brand-wrap brand-wrap-link" aria-label="Go to home">
+          <NextStepLogo />
+        </NavLink>
 
         <div className="top-nav-center">
           {links.map((link) => (
