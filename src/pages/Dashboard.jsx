@@ -33,7 +33,7 @@ function getOnboardingSuggestions(profile) {
 
 export default function Dashboard({ onRestartOnboarding }) {
   const navigate = useNavigate();
-  const { isGuestMode, isAuthenticated, userRole } = useAuth();
+  const { user, isGuestMode, isAuthenticated, userRole } = useAuth();
   const [data, setData] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
   const [flash, setFlash] = useState(() => loadPersonalizationFlash());
@@ -237,36 +237,42 @@ export default function Dashboard({ onRestartOnboarding }) {
     .map((id) => baseDashboardCards.find((card) => card.id === id))
     .filter(Boolean);
 
-  const quickActions = profile?.primaryPath === "career"
-    ? [
-      { label: "Open Career Quiz", to: "/career/quiz" },
-      { label: "Open College Match", to: "/college" }
-    ]
-    : profile?.primaryPath === "college"
-      ? [
-        { label: "Open College Quiz", to: "/college/quiz" },
-        { label: "Open Career Path", to: "/career" }
-      ]
-      : profile?.primaryPath === "money"
-        ? [
-          { label: "Continue Money Skills", to: "/money" },
-          { label: "Open Career Path", to: "/career" }
-        ]
-        : [
-          { label: "Open Career Path", to: "/career" },
-          { label: "Open College Match", to: "/college" }
-        ];
+  const displayName = user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "Alex";
+  const firstName = String(displayName).split(" ")[0] || "Alex";
+  const welcomeTitle = `Welcome back, ${firstName}!`;
 
-  const utilityActions = isAuthenticated
-    ? [
-      { label: "Open Study Assistant", to: "/study-assistant" },
-      { label: "Open My Classes", to: "/classes" }
-    ]
-    : [{ label: "Open Study Assistant", to: "/study-assistant" }];
-
-  if (isAuthenticated && userRole === "teacher") {
-    utilityActions.push({ label: "Teacher Dashboard", to: "/teacher" });
-  }
+  const featureCards = [
+    {
+      id: "career",
+      title: "Career Path Quiz",
+      description: "Discover careers that match your interests and skills.",
+      image:
+        "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=1200&q=80",
+      icon: "CP",
+      iconClass: "dash-feature-icon-career",
+      to: "/career"
+    },
+    {
+      id: "college",
+      title: "College Match Quiz",
+      description: "Find the perfect colleges for your goals and preferences.",
+      image:
+        "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
+      icon: "CM",
+      iconClass: "dash-feature-icon-college",
+      to: "/college"
+    },
+    {
+      id: "money",
+      title: "Money Skills",
+      description: "Learn essential financial literacy and money management.",
+      image:
+        "https://images.unsplash.com/photo-1580048915913-4f8f5cb481c4?auto=format&fit=crop&w=1200&q=80",
+      icon: "MS",
+      iconClass: "dash-feature-icon-money",
+      to: "/money"
+    }
+  ];
 
   useEffect(() => {
     if (!flash) return;
@@ -278,7 +284,7 @@ export default function Dashboard({ onRestartOnboarding }) {
   }, [flash]);
 
   return (
-    <section className={`section-card module-card dash-accent-${profile?.accentMode ?? "default"}`}>
+    <section className="dashboard-shell">
       {isGuestMode && (
         <section className="guest-reminder">
           <p>You&apos;re using guest mode. Create an account to permanently save progress.</p>
@@ -294,33 +300,69 @@ export default function Dashboard({ onRestartOnboarding }) {
         </section>
       )}
 
-      <div className="section-header">
-        <div>
-          <h2>{profile?.hero?.title ?? "Learning Hub"}</h2>
-          <p className="intro-copy">{profile?.hero?.body ?? "Track your module progress and keep the options you want to revisit."}</p>
-          {profile?.priorityHeadline && <p className="dash-priority">{profile.priorityHeadline}</p>}
-        </div>
-        <div className="badge-row">
-          <ProgressBadge label="Completed" value={`${completedCount}/3`} />
-          <ProgressBadge label="Favorites" value={data.favorites.length} />
-        </div>
-      </div>
+      <header className="dash-welcome">
+        <h1>{welcomeTitle}</h1>
+        <p>Ready to continue your learning journey?</p>
+      </header>
 
-      <div className="cta-row">
-        {quickActions.map((action) => (
-          <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
-            {action.label}
-          </button>
+      <section className="dash-feature-grid">
+        {featureCards.map((card) => (
+          <article
+            key={card.id}
+            className="dash-feature-card"
+            onClick={() => navigate(card.to)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") navigate(card.to);
+            }}
+          >
+            <img src={card.image} alt={card.title} className="dash-feature-image" />
+            <div className="dash-feature-content">
+              <span className={`dash-feature-icon ${card.iconClass}`}>{card.icon}</span>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
+            </div>
+          </article>
         ))}
-        {utilityActions.map((action) => (
-          <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
-            {action.label}
-          </button>
-        ))}
-        <button className="secondary-btn" onClick={onRestartOnboarding}>
-          Restart Onboarding
-        </button>
-      </div>
+      </section>
+
+      <section className="dash-secondary-grid">
+        <article className="result-card">
+          <h3>Progress Overview</h3>
+          <div className="badge-row">
+            <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} />
+            <ProgressBadge label="Saved Favorites" value={data.favorites.length} />
+          </div>
+          <ul className="list-clean">
+            <li>Career Path: {data.progress.careerComplete ? "Done" : "Pending"}</li>
+            <li>College Match: {data.progress.collegeComplete ? "Done" : "Pending"}</li>
+            <li>Money Skills: {data.progress.moneyComplete ? "Done" : "Pending"}</li>
+          </ul>
+        </article>
+
+        <article className="result-card">
+          <h3>Quick Actions</h3>
+          <div className="cta-row">
+            <button className="secondary-btn" onClick={() => navigate("/study-assistant")}>Open Study Assistant</button>
+            <button className="secondary-btn" onClick={() => navigate("/classes")}>Open My Classes</button>
+            {isAuthenticated && userRole === "teacher" && (
+              <button className="secondary-btn" onClick={() => navigate("/teacher")}>Teacher Dashboard</button>
+            )}
+            <button className="secondary-btn" onClick={onRestartOnboarding}>Restart Onboarding</button>
+          </div>
+          {(data.quizResults?.career || data.quizResults?.college) && (
+            <ul className="list-clean">
+              {data.quizResults?.career && (
+                <li>Career result updated: {formatTimestamp(data.quizResults.career.completedAt)}</li>
+              )}
+              {data.quizResults?.college && (
+                <li>College result updated: {formatTimestamp(data.quizResults.college.completedAt)}</li>
+              )}
+            </ul>
+          )}
+        </article>
+      </section>
 
       {suggestions.length > 0 && (
         <section className="result-card">
@@ -330,13 +372,6 @@ export default function Dashboard({ onRestartOnboarding }) {
               <li key={item}>{item}</li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {profile?.reasonWhy && (
-        <section className="result-card">
-          <h3>Why Your Dashboard Looks This Way</h3>
-          <p>{profile.reasonWhy}</p>
         </section>
       )}
 
@@ -355,43 +390,18 @@ export default function Dashboard({ onRestartOnboarding }) {
         </section>
       )}
 
-      {profile?.suggestedNextActions?.length > 0 && (
+      {data.favorites.length > 0 && (
         <section className="result-card">
-          <h3>Suggested Next Actions</h3>
+          <h3>Saved Ideas</h3>
           <ul className="list-clean">
-            {profile.suggestedNextActions.map((action) => (
-              <li key={action}>{action}</li>
+            {data.favorites.map((fav) => (
+              <li key={`${fav.type}-${fav.name}`} className="favorite-item">
+                <span>{fav.name} <small>({fav.type})</small></span>
+                <button className="mini-action" onClick={() => removeFavorite(fav)}>Remove</button>
+              </li>
             ))}
           </ul>
         </section>
-      )}
-
-      <div className="dashboard-grid">
-        {orderedDashboardCards.map((card) => (
-          <article key={card.id} className="mini-card">
-            <h3>{card.title}</h3>
-            {card.body}
-          </article>
-        ))}
-      </div>
-
-      {(data.quizResults?.career || data.quizResults?.college) && (
-        <div className="dashboard-grid">
-          {data.quizResults?.career && (
-            <article className="mini-card">
-              <h3>Career Quiz Snapshot</h3>
-              <p>{data.quizResults.career.narrative ?? data.quizResults.career.whyItFits}</p>
-              <p className="mini-label">Updated: {formatTimestamp(data.quizResults.career.completedAt)}</p>
-            </article>
-          )}
-          {data.quizResults?.college && (
-            <article className="mini-card">
-              <h3>College Quiz Snapshot</h3>
-              <p>{data.quizResults.college.whyItFits}</p>
-              <p className="mini-label">Updated: {formatTimestamp(data.quizResults.college.completedAt)}</p>
-            </article>
-          )}
-        </div>
       )}
 
       {data.quizResults?.careerHistory?.length > 0 && (
