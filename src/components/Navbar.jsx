@@ -6,7 +6,8 @@ const links = [
   { to: "/", label: "Home" },
   { to: "/career", label: "Career Path" },
   { to: "/college", label: "College Match" },
-  { to: "/money", label: "Money Skills" }
+  { to: "/money", label: "Money Skills" },
+  { to: "/study-assistant", label: "Study Assistant" }
 ];
 
 export default function Navbar() {
@@ -34,6 +35,11 @@ export default function Navbar() {
           {isAuthenticated && (
             <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
               Dashboard
+            </NavLink>
+          )}
+          {isAuthenticated && (
+            <NavLink to="/classes" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
+              My Classes
             </NavLink>
           )}
           {!isAuthenticated && !isGuestMode && (

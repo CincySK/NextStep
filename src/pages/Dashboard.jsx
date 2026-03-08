@@ -33,7 +33,7 @@ function getOnboardingSuggestions(profile) {
 
 export default function Dashboard({ onRestartOnboarding }) {
   const navigate = useNavigate();
-  const { isGuestMode } = useAuth();
+  const { isGuestMode, isAuthenticated } = useAuth();
   const [data, setData] = useState(loadAppData());
   const profile = loadPersonalizationProfile();
   const [flash, setFlash] = useState(() => loadPersonalizationFlash());
@@ -161,6 +161,21 @@ export default function Dashboard({ onRestartOnboarding }) {
       id: "skillBuilder",
       title: "Skill Builder",
       body: "Choose one new skill aligned with your top pathway this month."
+    },
+    studyAssistant: {
+      id: "studyAssistant",
+      title: "AI Study Assistant",
+      body: "Get step-by-step tutoring help for assignments, writing, and concept review."
+    },
+    myClasses: {
+      id: "myClasses",
+      title: "My Classes",
+      body: "Join classes with a code, review assignments, and open contextual help."
+    },
+    teacherWorkspace: {
+      id: "teacherWorkspace",
+      title: "Teacher Workspace",
+      body: "Create classes, upload materials, and power assignment-aware tutoring."
     }
   };
 
@@ -242,6 +257,14 @@ export default function Dashboard({ onRestartOnboarding }) {
           { label: "Open College Match", to: "/college" }
         ];
 
+  const utilityActions = isAuthenticated
+    ? [
+      { label: "Open Study Assistant", to: "/study-assistant" },
+      { label: "Open My Classes", to: "/classes" },
+      { label: "Teacher Dashboard", to: "/teacher" }
+    ]
+    : [{ label: "Open Study Assistant", to: "/study-assistant" }];
+
   useEffect(() => {
     if (!flash) return;
     const timer = setTimeout(() => {
@@ -282,6 +305,11 @@ export default function Dashboard({ onRestartOnboarding }) {
 
       <div className="cta-row">
         {quickActions.map((action) => (
+          <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
+            {action.label}
+          </button>
+        ))}
+        {utilityActions.map((action) => (
           <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
             {action.label}
           </button>

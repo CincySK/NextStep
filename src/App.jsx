@@ -23,6 +23,11 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ProfilePage from "./pages/ProfilePage";
+import StudyAssistant from "./pages/StudyAssistant";
+import ClassesPage from "./pages/ClassesPage";
+import ClassDetailPage from "./pages/ClassDetailPage";
+import AssignmentDetailPage from "./pages/AssignmentDetailPage";
+import TeacherPage from "./pages/TeacherPage";
 
 export default function App() {
   const location = useLocation();
@@ -46,7 +51,10 @@ export default function App() {
       "/login": "NextStep | Log In",
       "/signup": "NextStep | Sign Up",
       "/forgot-password": "NextStep | Reset Password",
-      "/profile": "NextStep | Profile"
+      "/profile": "NextStep | Profile",
+      "/study-assistant": "NextStep | Study Assistant",
+      "/classes": "NextStep | My Classes",
+      "/teacher": "NextStep | Teacher Dashboard"
     };
     document.title = titles[location.pathname] ?? "NextStep | Student Future Planning";
   }, [location.pathname]);
@@ -102,6 +110,46 @@ export default function App() {
           <Route path="/college" element={<CollegeMatch />} />
           <Route path="/college/quiz" element={<CollegeQuiz />} />
           <Route path="/money" element={<MoneySkills />} />
+          <Route
+            path="/study-assistant"
+            element={(
+              <ProtectedRoute allowGuest>
+                <StudyAssistant />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/classes"
+            element={(
+              <ProtectedRoute>
+                <ClassesPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/classes/:classId"
+            element={(
+              <ProtectedRoute>
+                <ClassDetailPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/classes/:classId/assignments/:assignmentId"
+            element={(
+              <ProtectedRoute>
+                <AssignmentDetailPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/teacher"
+            element={(
+              <ProtectedRoute>
+                <TeacherPage />
+              </ProtectedRoute>
+            )}
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

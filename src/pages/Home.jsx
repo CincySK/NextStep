@@ -63,7 +63,9 @@ export default function Home() {
     "/college": { label: "Open College Match", to: "/college" },
     "/college/quiz": { label: "Take College Quiz", to: "/college/quiz" },
     "/money": { label: "Open Money Skills", to: "/money" },
-    "/dashboard": { label: "Go to Dashboard", to: "/dashboard" }
+    "/dashboard": { label: "Go to Dashboard", to: "/dashboard" },
+    "/study-assistant": { label: "Open Study Assistant", to: "/study-assistant" },
+    "/classes": { label: "Open My Classes", to: "/classes" }
   };
 
   const quickActions = (profile?.quickLinks ?? ["/career", "/college", "/money"])

@@ -26,6 +26,19 @@ const defaultState = {
     college: null,
     money: null,
     careerHistory: []
+  },
+  studyAssistant: {
+    conversationsByUser: {},
+    selectedAssignmentByUser: {}
+  },
+  school: {
+    classes: {},
+    classOrder: [],
+    assignments: {},
+    assignmentOrder: [],
+    documents: {},
+    studentClasses: {},
+    teacherClasses: {}
   }
 };
 

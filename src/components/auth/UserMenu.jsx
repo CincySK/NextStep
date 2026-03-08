@@ -46,6 +46,9 @@ export default function UserMenu() {
       {open && (
         <div className="user-dropdown" role="menu">
           <Link to="/dashboard" className="user-link" onClick={() => setOpen(false)}>Dashboard</Link>
+          <Link to="/study-assistant" className="user-link" onClick={() => setOpen(false)}>Study Assistant</Link>
+          <Link to="/classes" className="user-link" onClick={() => setOpen(false)}>My Classes</Link>
+          <Link to="/teacher" className="user-link" onClick={() => setOpen(false)}>Teacher</Link>
           <Link to="/profile" className="user-link" onClick={() => setOpen(false)}>Profile</Link>
           <button type="button" className="user-link user-link-button" onClick={handleLogout}>Log Out</button>
         </div>
