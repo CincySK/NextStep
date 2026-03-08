@@ -28,11 +28,11 @@ export default function Navbar() {
     <header className="top-nav-wrap">
       <nav className="top-nav container">
         <div className="brand-wrap">
-          <div className="brand-mark">N</div>
-          <div>
-            <div className="brand">NextStep</div>
-            <p className="brand-subtitle">Future Planning for Students</p>
-          </div>
+          <img
+            src="/nextstep-logo.png"
+            alt="NextStep"
+            className="brand-logo-image"
+          />
         </div>
 
         <div className="top-nav-center">

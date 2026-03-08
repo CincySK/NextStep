@@ -7273,3 +7273,20 @@ p {
     min-width: auto;
   }
 }
+
+.brand-wrap {
+  min-width: 220px;
+}
+
+.brand-logo-image {
+  height: 54px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .brand-logo-image {
+    height: 44px;
+  }
+}
