@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import UserMenu from "./auth/UserMenu";
 import { useAuth } from "../auth/useAuth";
-import logoSvg from "../assets/nextstep-logo-colored.svg";
+import logoSvg from "../assets/nextstep-logo-colored.svg?raw";
 
 const studentLinks = [
   { to: "/", label: "Home" },
@@ -29,16 +29,11 @@ export default function Navbar() {
     <header className="top-nav-wrap">
       <nav className="top-nav container">
         <NavLink to="/" className="brand-wrap brand-wrap-link" aria-label="Go to home">
-          <span className="nextstep-logo-viewport" aria-hidden="true">
-            <img
-              src={logoSvg}
-              alt="NextStep"
-              className="nextstep-logo-file"
-              loading="eager"
-              decoding="sync"
-              fetchPriority="high"
-            />
-          </span>
+          <span
+            className="nextstep-logo-viewport"
+            aria-hidden="true"
+            dangerouslySetInnerHTML={{ __html: logoSvg }}
+          />
         </NavLink>
 
         <div className="top-nav-center">

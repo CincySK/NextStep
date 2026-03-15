@@ -7275,10 +7275,10 @@ p {
 }
 
 .brand-wrap {
-  min-width: 210px;
+  min-width: 190px;
   display: inline-flex;
   align-items: center;
-  height: 52px;
+  height: 40px;
 }
 
 .brand-wrap-link {
@@ -7286,20 +7286,23 @@ p {
 }
 
 .nextstep-logo-viewport {
-  width: 220px;
-  height: 42px;
+  width: 240px;
+  height: 32px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
 }
 
-.nextstep-logo-file {
-  height: 42px;
+.nextstep-logo-viewport svg {
+  height: 32px;
   width: auto;
   display: block;
-  object-fit: contain;
-  transform: scale(2.55) translateX(18px);
+  transform: scale(3.35) translate(28px, 1px);
   transform-origin: left center;
+}
+
+.nextstep-logo-viewport rect {
+  fill: transparent;
 }
 
 .nextstep-logo {
@@ -7338,13 +7341,13 @@ p {
 
 @media (max-width: 900px) {
   .nextstep-logo-viewport {
-    width: 170px;
-    height: 34px;
+    width: 180px;
+    height: 26px;
   }
 
-  .nextstep-logo-file {
-    height: 34px;
-    transform: scale(2.35) translateX(14px);
+  .nextstep-logo-viewport svg {
+    height: 26px;
+    transform: scale(3.1) translate(21px, 1px);
   }
 
   .nextstep-logo-mark {
