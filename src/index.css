@@ -7275,22 +7275,31 @@ p {
 }
 
 .brand-wrap {
-  min-width: 170px;
+  min-width: 210px;
   display: inline-flex;
   align-items: center;
-  height: 44px;
+  height: 52px;
 }
 
 .brand-wrap-link {
   text-decoration: none;
 }
 
+.nextstep-logo-viewport {
+  width: 220px;
+  height: 42px;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+
 .nextstep-logo-file {
-  height: 38px;
+  height: 42px;
   width: auto;
-  max-width: 190px;
   display: block;
   object-fit: contain;
+  transform: scale(2.55) translateX(18px);
+  transform-origin: left center;
 }
 
 .nextstep-logo {
@@ -7328,9 +7337,14 @@ p {
 }
 
 @media (max-width: 900px) {
+  .nextstep-logo-viewport {
+    width: 170px;
+    height: 34px;
+  }
+
   .nextstep-logo-file {
-    height: 32px;
-    max-width: 150px;
+    height: 34px;
+    transform: scale(2.35) translateX(14px);
   }
 
   .nextstep-logo-mark {

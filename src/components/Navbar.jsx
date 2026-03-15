@@ -29,14 +29,16 @@ export default function Navbar() {
     <header className="top-nav-wrap">
       <nav className="top-nav container">
         <NavLink to="/" className="brand-wrap brand-wrap-link" aria-label="Go to home">
-          <img
-            src={logoSvg}
-            alt="NextStep"
-            className="nextstep-logo-file"
-            loading="eager"
-            decoding="sync"
-            fetchPriority="high"
-          />
+          <span className="nextstep-logo-viewport" aria-hidden="true">
+            <img
+              src={logoSvg}
+              alt="NextStep"
+              className="nextstep-logo-file"
+              loading="eager"
+              decoding="sync"
+              fetchPriority="high"
+            />
+          </span>
         </NavLink>
 
         <div className="top-nav-center">
