@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import UserMenu from "./auth/UserMenu";
 import { useAuth } from "../auth/useAuth";
-import logoSvg from "../assets/nextstep-logo.svg";
+import logoSvg from "../assets/nextstep-logo-colored.svg";
 
 const studentLinks = [
   { to: "/", label: "Home" },
