@@ -7275,7 +7275,10 @@ p {
 }
 
 .brand-wrap {
-  min-width: 220px;
+  min-width: 170px;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
 }
 
 .brand-wrap-link {
@@ -7283,9 +7286,11 @@ p {
 }
 
 .nextstep-logo-file {
-  width: 210px;
-  height: auto;
+  height: 38px;
+  width: auto;
+  max-width: 190px;
   display: block;
+  object-fit: contain;
 }
 
 .nextstep-logo {
@@ -7324,7 +7329,8 @@ p {
 
 @media (max-width: 900px) {
   .nextstep-logo-file {
-    width: 160px;
+    height: 32px;
+    max-width: 150px;
   }
 
   .nextstep-logo-mark {

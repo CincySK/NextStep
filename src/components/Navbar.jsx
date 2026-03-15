@@ -29,7 +29,14 @@ export default function Navbar() {
     <header className="top-nav-wrap">
       <nav className="top-nav container">
         <NavLink to="/" className="brand-wrap brand-wrap-link" aria-label="Go to home">
-          <img src={logoSvg} alt="NextStep" className="nextstep-logo-file" />
+          <img
+            src={logoSvg}
+            alt="NextStep"
+            className="nextstep-logo-file"
+            loading="eager"
+            decoding="sync"
+            fetchPriority="high"
+          />
         </NavLink>
 
         <div className="top-nav-center">
