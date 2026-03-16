@@ -36,25 +36,23 @@ export default function Navbar() {
           />
         </NavLink>
 
-        <div className="top-nav-middle">
-          <div className="top-nav-center">
-            {links.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={({ isActive }) =>
-                  `nav-link ${isActive ? "nav-link-active" : ""}`
-                }
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            {isAuthenticated && userRole !== "teacher" && (
-              <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
-                Dashboard
-              </NavLink>
-            )}
-          </div>
+        <div className="top-nav-center">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) =>
+                `nav-link ${isActive ? "nav-link-active" : ""}`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+          {isAuthenticated && userRole !== "teacher" && (
+            <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? "nav-link-active" : ""}`}>
+              Dashboard
+            </NavLink>
+          )}
         </div>
 
         <div className="top-nav-right">
