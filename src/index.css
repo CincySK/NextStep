@@ -7391,7 +7391,7 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 0.2rem;
+  padding-left: 0.65rem;
 }
 
 .brand-wrap-link {
@@ -7399,18 +7399,18 @@ p {
 }
 
 .nextstep-logo-viewport {
-  width: 264px;
-  height: 30px;
+  width: 278px;
+  height: 32px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
 }
 
 .nextstep-logo-viewport svg {
-  height: 30px;
+  height: 32px;
   width: auto;
   display: block;
-  transform: scale(3.9) translate(35px, 0.5px);
+  transform: scale(4.08) translate(37px, 0.5px);
   transform-origin: left center;
 }
 
@@ -7550,16 +7550,17 @@ p {
 
   .brand-wrap {
     min-width: 212px;
+    padding-left: 0.45rem;
   }
 
   .nextstep-logo-viewport {
-    width: 224px;
-    height: 28px;
+    width: 236px;
+    height: 30px;
   }
 
   .nextstep-logo-viewport svg {
-    height: 28px;
-    transform: scale(3.45) translate(27px, 0.5px);
+    height: 30px;
+    transform: scale(3.58) translate(29px, 0.5px);
   }
 
   .nav-link {
@@ -7579,16 +7580,17 @@ p {
   .brand-wrap {
     min-width: 152px;
     height: 36px;
+    padding-left: 0.3rem;
   }
 
   .nextstep-logo-viewport {
-    width: 156px;
-    height: 22px;
+    width: 164px;
+    height: 24px;
   }
 
   .nextstep-logo-viewport svg {
-    height: 22px;
-    transform: scale(3.25) translate(18px, 0.5px);
+    height: 24px;
+    transform: scale(3.34) translate(19px, 0.5px);
   }
 
   .top-nav-right {
