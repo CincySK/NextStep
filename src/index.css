@@ -7377,16 +7377,15 @@ p {
 
 .top-nav {
   min-height: 68px;
-  display: grid;
-  grid-template-columns: auto max-content auto;
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.9rem;
   padding: 0.45rem 0;
 }
 
 .brand-wrap {
-  min-width: 244px;
+  flex: 0 0 228px;
   height: 42px;
   display: inline-flex;
   align-items: center;
@@ -7414,15 +7413,22 @@ p {
   transform-origin: left center;
 }
 
+.top-nav-middle {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .top-nav-center {
   min-width: 0;
   max-width: 100%;
-  justify-self: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.24rem;
-  padding: 0.24rem 0.28rem;
+  gap: 0.18rem;
+  padding: 0.2rem 0.24rem;
   border-radius: 999px;
   background: rgba(248, 250, 252, 0.88);
   border: 1px solid rgba(226, 232, 240, 0.95);
@@ -7442,10 +7448,10 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
-  padding: 0.55rem 0.92rem;
+  min-height: 36px;
+  padding: 0.48rem 0.78rem;
   border-radius: 999px;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: #334155;
@@ -7465,7 +7471,7 @@ p {
 .nav-link-active {
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .nav-link-auth {
@@ -7480,8 +7486,7 @@ p {
 }
 
 .top-nav-right {
-  min-width: 76px;
-  justify-self: end;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
@@ -7544,12 +7549,11 @@ p {
 
 @media (max-width: 1080px) {
   .top-nav {
-    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.9rem;
   }
 
   .brand-wrap {
-    min-width: 212px;
+    flex-basis: 206px;
   }
 
   .nextstep-logo-viewport {
@@ -7563,21 +7567,19 @@ p {
   }
 
   .nav-link {
-    padding: 0.52rem 0.72rem;
-    font-size: 0.86rem;
+    padding: 0.46rem 0.66rem;
+    font-size: 0.82rem;
   }
 }
 
 @media (max-width: 900px) {
   .top-nav {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    justify-content: initial;
     gap: 0.75rem;
     min-height: 64px;
   }
 
   .brand-wrap {
-    min-width: 152px;
+    flex-basis: 152px;
     height: 36px;
   }
 
@@ -7595,8 +7597,11 @@ p {
     min-width: auto;
   }
 
-  .top-nav-center {
+  .top-nav-middle {
     justify-content: flex-start;
+  }
+
+  .top-nav-center {
     padding: 0.2rem 0.22rem;
     gap: 0.18rem;
   }
