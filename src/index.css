@@ -7378,11 +7378,11 @@ p {
 .top-nav {
   min-height: 68px;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto max-content auto;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  gap: 1rem;
   padding: 0.45rem 0;
-  overflow: hidden;
 }
 
 .brand-wrap {
@@ -7416,7 +7416,7 @@ p {
 
 .top-nav-center {
   min-width: 0;
-  width: 100%;
+  max-width: 100%;
   justify-self: center;
   display: inline-flex;
   align-items: center;
@@ -7544,7 +7544,7 @@ p {
 
 @media (max-width: 1080px) {
   .top-nav {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     gap: 0.9rem;
   }
 
