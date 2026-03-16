@@ -7369,28 +7369,28 @@ p {
   position: sticky;
   top: 0;
   z-index: 80;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px) saturate(150%);
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
 }
 
 .top-nav {
-  min-height: 74px;
+  min-height: 68px;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1.25rem;
-  padding: 0.65rem 0;
+  gap: 1.5rem;
+  padding: 0.45rem 0;
 }
 
 .brand-wrap {
-  min-width: 228px;
-  height: 48px;
+  min-width: 244px;
+  height: 42px;
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 0.15rem;
+  padding-left: 0.2rem;
 }
 
 .brand-wrap-link {
@@ -7398,18 +7398,18 @@ p {
 }
 
 .nextstep-logo-viewport {
-  width: 248px;
-  height: 34px;
+  width: 264px;
+  height: 30px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
 }
 
 .nextstep-logo-viewport svg {
-  height: 34px;
+  height: 30px;
   width: auto;
   display: block;
-  transform: scale(3.55) translate(31px, 1px);
+  transform: scale(3.9) translate(35px, 0.5px);
   transform-origin: left center;
 }
 
@@ -7419,31 +7419,31 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
-  padding: 0.3rem;
+  gap: 0.24rem;
+  padding: 0.24rem 0.28rem;
   border-radius: 999px;
-  background: rgba(248, 250, 252, 0.92);
+  background: rgba(248, 250, 252, 0.88);
   border: 1px solid rgba(226, 232, 240, 0.95);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 0 rgba(15, 23, 42, 0.02);
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
-  padding: 0.6rem 0.95rem;
+  min-height: 38px;
+  padding: 0.55rem 0.92rem;
   border-radius: 999px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   color: #334155;
   text-decoration: none;
-  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  transition: background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   color: #0f172a;
   transform: translateY(-1px);
 }
@@ -7451,7 +7451,7 @@ p {
 .nav-link-active {
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .nav-link-auth {
@@ -7462,16 +7462,17 @@ p {
 .nav-link-cta {
   color: #ffffff;
   background: linear-gradient(135deg, #2563eb, #3b82f6);
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.16);
 }
 
 .top-nav-right {
-  min-width: 104px;
+  min-width: 76px;
   justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.45rem;
+  gap: 0.4rem;
+  padding-right: 0.1rem;
 }
 
 .user-menu {
@@ -7479,32 +7480,32 @@ p {
 }
 
 .user-trigger {
-  min-height: 48px;
-  min-width: 48px;
+  min-height: 44px;
+  min-width: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.2rem;
+  padding: 0.18rem;
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 999px;
   background: #ffffff;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .user-trigger:hover {
   transform: translateY(-1px);
   border-color: rgba(191, 219, 254, 0.95);
-  box-shadow: 0 12px 22px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.07);
 }
 
 .user-avatar {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   background: linear-gradient(135deg, #0ea5e9, #0284c7);
   color: #ffffff;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
@@ -7530,26 +7531,26 @@ p {
 @media (max-width: 1080px) {
   .top-nav {
     grid-template-columns: auto 1fr auto;
-    gap: 0.8rem;
+    gap: 0.9rem;
   }
 
   .brand-wrap {
-    min-width: 196px;
+    min-width: 212px;
   }
 
   .nextstep-logo-viewport {
-    width: 210px;
-    height: 30px;
+    width: 224px;
+    height: 28px;
   }
 
   .nextstep-logo-viewport svg {
-    height: 30px;
-    transform: scale(3.2) translate(24px, 1px);
+    height: 28px;
+    transform: scale(3.45) translate(27px, 0.5px);
   }
 
   .nav-link {
-    padding: 0.55rem 0.78rem;
-    font-size: 0.88rem;
+    padding: 0.52rem 0.72rem;
+    font-size: 0.86rem;
   }
 }
 
@@ -7558,7 +7559,7 @@ p {
     grid-template-columns: auto auto;
     justify-content: space-between;
     gap: 0.75rem;
-    min-height: 68px;
+    min-height: 64px;
   }
 
   .top-nav-center {
@@ -7576,18 +7577,18 @@ p {
   }
 
   .brand-wrap {
-    min-width: 164px;
-    height: 40px;
+    min-width: 152px;
+    height: 36px;
   }
 
   .nextstep-logo-viewport {
-    width: 170px;
-    height: 26px;
+    width: 156px;
+    height: 22px;
   }
 
   .nextstep-logo-viewport svg {
-    height: 26px;
-    transform: scale(2.95) translate(18px, 1px);
+    height: 22px;
+    transform: scale(3.25) translate(18px, 0.5px);
   }
 
   .top-nav-right {
@@ -7595,12 +7596,12 @@ p {
   }
 
   .user-trigger {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 40px;
+    min-width: 40px;
   }
 
   .user-avatar {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
   }
 }
