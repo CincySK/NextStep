@@ -7730,13 +7730,14 @@ body {
 }
 
 .immersive-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 0.45rem;
   text-decoration: none;
   color: inherit;
-  min-height: 74px;
-  padding: 1rem 1rem 1rem 1.05rem;
+  min-height: 0;
+  padding: 0.9rem 0.95rem;
   margin-bottom: 0.45rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.06);
@@ -7749,10 +7750,10 @@ body {
 }
 
 .immersive-brand-logo {
-  width: 112px;
-  min-width: 112px;
-  max-width: 112px;
-  height: 42px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 44px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
@@ -7762,37 +7763,31 @@ body {
 }
 
 .immersive-brand-logo svg {
-  height: 42px;
+  height: 44px;
   width: auto;
+  max-width: none;
   display: block;
-  transform: scale(4.55) translate(36px, 1px);
+  transform: scale(4.25) translate(28px, 1px);
   transform-origin: left center;
 }
 
 .immersive-brand-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.22rem;
+  align-items: flex-start;
+  gap: 0.18rem;
   min-width: 0;
-  flex: 1 1 auto;
+  width: 100%;
+  flex: 0 0 auto;
 }
 
-.immersive-brand-copy strong {
-  font-size: 1.42rem;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  font-weight: 800;
-  color: #ffffff;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
-  white-space: nowrap;
-}
-
-.immersive-brand-copy span:last-child {
+.immersive-brand-subtitle {
   font-size: 0.8rem;
   line-height: 1.25;
   color: #94a3b8;
   font-weight: 600;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .immersive-sidebar-section {
@@ -8669,15 +8664,15 @@ textarea::placeholder {
   }
 
   .immersive-brand-logo {
-    width: 104px;
-    min-width: 104px;
-    max-width: 104px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     height: 34px;
   }
 
   .immersive-brand-logo svg {
     height: 34px;
-    transform: scale(3.7) translate(29px, 1px);
+    transform: scale(3.45) translate(20px, 1px);
   }
 
   .feature-module-grid,
@@ -9554,10 +9549,6 @@ label {
 .immersive-shell .user-trigger,
 .immersive-mobile-brand .user-trigger {
   min-height: 50px;
-}
-
-.immersive-brand-copy strong {
-  font-size: 1.42rem;
 }
 
 .site-footer {
