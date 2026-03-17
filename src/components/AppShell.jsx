@@ -112,6 +112,7 @@ export default function AppShell({ children }) {
         <NavLink to={isAuthenticated ? "/dashboard" : "/"} className="immersive-brand" aria-label="Go to NextStep home">
           <span className="immersive-brand-logo" dangerouslySetInnerHTML={{ __html: logoSvg }} />
           <span className="immersive-brand-copy">
+            <strong className="immersive-brand-title">NextStep</strong>
             <span className="immersive-brand-subtitle">No stops to success</span>
           </span>
         </NavLink>
@@ -157,6 +158,7 @@ export default function AppShell({ children }) {
           <NavLink to={isAuthenticated ? "/dashboard" : "/"} className="immersive-brand" aria-label="Go to NextStep home">
             <span className="immersive-brand-logo" dangerouslySetInnerHTML={{ __html: logoSvg }} />
             <span className="immersive-brand-copy">
+              <strong className="immersive-brand-title">NextStep</strong>
               <span className="immersive-brand-subtitle">No stops to success</span>
             </span>
           </NavLink>

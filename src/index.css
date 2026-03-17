@@ -7669,7 +7669,7 @@ body {
 .immersive-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 270px minmax(0, 1fr) 320px;
+  grid-template-columns: 286px minmax(0, 1fr) 320px;
   gap: 1.25rem;
   padding: 1rem;
 }
@@ -7731,13 +7731,14 @@ body {
 
 .immersive-brand {
   display: grid;
-  grid-template-columns: 1fr;
-  align-items: start;
-  gap: 0.45rem;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.75rem;
+  row-gap: 0;
   text-decoration: none;
   color: inherit;
   min-height: 0;
-  padding: 0.9rem 0.95rem;
+  padding: 0.85rem 0.95rem;
   margin-bottom: 0.45rem;
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.06);
@@ -7746,14 +7747,13 @@ body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .immersive-brand-logo {
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
-  height: 44px;
+  width: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  height: 42px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
@@ -7767,7 +7767,7 @@ body {
   width: auto;
   max-width: none;
   display: block;
-  transform: scale(4.25) translate(28px, 1px);
+  transform: scale(3.28) translate(2px, 2px);
   transform-origin: left center;
 }
 
@@ -7775,19 +7775,34 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.18rem;
+  justify-content: center;
+  gap: 0.12rem;
   min-width: 0;
   width: 100%;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
+}
+
+.immersive-brand-title {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
+  font-size: 1.32rem;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+  color: #ffffff;
+  white-space: nowrap;
 }
 
 .immersive-brand-subtitle {
+  display: block;
+  max-width: 100%;
+  min-width: 0;
   font-size: 0.8rem;
   line-height: 1.25;
   color: #94a3b8;
   font-weight: 600;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
 }
 
 .immersive-sidebar-section {
@@ -8605,7 +8620,7 @@ textarea::placeholder {
 
 @media (max-width: 1400px) {
   .immersive-shell {
-    grid-template-columns: 250px minmax(0, 1fr) 290px;
+    grid-template-columns: 266px minmax(0, 1fr) 290px;
   }
 
   .feature-module-grid,
@@ -8617,7 +8632,7 @@ textarea::placeholder {
 
 @media (max-width: 1180px) {
   .immersive-shell {
-    grid-template-columns: 240px minmax(0, 1fr);
+    grid-template-columns: 254px minmax(0, 1fr);
   }
 
   .immersive-rail {
@@ -8664,15 +8679,15 @@ textarea::placeholder {
   }
 
   .immersive-brand-logo {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
     height: 34px;
   }
 
   .immersive-brand-logo svg {
     height: 34px;
-    transform: scale(3.45) translate(20px, 1px);
+    transform: scale(2.88) translate(1px, 2px);
   }
 
   .feature-module-grid,
