@@ -10394,38 +10394,32 @@ label {
   padding-left: 0.72rem;
 }
 
-.immersive-brand-logo {
-  width: 40px;
-  min-width: 40px;
-  max-width: 40px;
-  height: 36px;
-  padding-left: 4px;
-  box-sizing: border-box;
-  overflow: visible;
-}
-
-.immersive-brand-logo svg {
-  height: 36px;
-  transform: scale(2.62) translate(1px, 1px);
-}
-
 /* Sidebar brand rebuild: native mark + text lockup */
 .immersive-brand {
-  grid-template-columns: 32px minmax(0, 1fr);
-  column-gap: 0.66rem;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  column-gap: 0.72rem;
   align-items: center;
-  padding: 0.62rem 0.72rem;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(148, 197, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  margin: 0;
+  padding: 0.68rem 0.78rem;
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(29, 41, 72, 0.92) 0%, rgba(23, 33, 60, 0.88) 100%);
+  border: 1px solid rgba(148, 197, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 10px 22px rgba(2, 8, 23, 0.18);
+  text-decoration: none;
+  overflow: hidden;
 }
 
 .immersive-brand-mark {
   position: relative;
-  width: 28px;
-  height: 28px;
-  display: inline-block;
+  width: 30px;
+  height: 30px;
+  display: block;
   flex: 0 0 auto;
 }
 
@@ -10485,28 +10479,51 @@ label {
 }
 
 .immersive-brand-copy {
-  gap: 0.05rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  gap: 0.12rem;
 }
 
 .immersive-brand-title {
-  font-size: 1rem;
+  display: block;
+  min-width: 0;
+  font-size: 1.06rem;
   line-height: 1;
   letter-spacing: -0.03em;
   font-weight: 800;
-  color: #f8fafc;
+  color: #f8fbff;
+  text-shadow: 0 1px 0 rgba(15, 23, 42, 0.18);
 }
 
 .immersive-brand-subtitle {
-  font-size: 0.62rem;
-  line-height: 1.05;
-  color: #94a3b8;
+  display: block;
+  min-width: 0;
+  font-size: 0.68rem;
+  line-height: 1.15;
+  color: #a9b8d3;
   font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.immersive-brand:hover {
+  background: linear-gradient(180deg, rgba(33, 47, 81, 0.94) 0%, rgba(27, 38, 69, 0.9) 100%);
+  border-color: rgba(148, 197, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 26px rgba(2, 8, 23, 0.22);
+}
+
+.immersive-brand:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.65);
+  outline-offset: 2px;
 }
 
 @media (max-width: 900px) {
   .immersive-brand {
     grid-template-columns: 28px minmax(0, 1fr);
-    padding: 0.56rem 0.64rem;
+    padding: 0.62rem 0.68rem;
   }
 
   .immersive-brand-mark {
@@ -10539,5 +10556,13 @@ label {
   .immersive-brand-mark-dot {
     top: 5px;
     left: 7px;
+  }
+
+  .immersive-brand-title {
+    font-size: 1rem;
+  }
+
+  .immersive-brand-subtitle {
+    font-size: 0.64rem;
   }
 }
