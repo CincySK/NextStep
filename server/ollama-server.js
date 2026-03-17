@@ -3,6 +3,10 @@ import http from "node:http";
 const PORT = Number(process.env.AI_SERVER_PORT || 3001);
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434/api/generate";
 const MODEL = process.env.OLLAMA_MODEL || "phi3";
+const EMPTY_FAVICON = Buffer.from(
+  "AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+  "base64"
+);
 
 const SYSTEM_PROMPT = [
   "You are a highly intelligent tutor for students.",
@@ -295,6 +299,25 @@ async function buildTutorReply(payload) {
 const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     sendJson(res, 204, {});
+    return;
+  }
+
+  if (req.method === "GET" && req.url === "/") {
+    sendJson(res, 200, {
+      status: "ok",
+      service: "NextStep local AI tutor",
+      model: MODEL,
+      endpoint: "/api/chat"
+    });
+    return;
+  }
+
+  if (req.method === "GET" && req.url === "/favicon.ico") {
+    res.writeHead(200, {
+      "Content-Type": "image/x-icon",
+      "Cache-Control": "public, max-age=86400"
+    });
+    res.end(EMPTY_FAVICON);
     return;
   }
 
