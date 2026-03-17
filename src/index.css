@@ -10618,3 +10618,37 @@ label {
     font-size: 0.64rem;
   }
 }
+
+/* Local tutor response polish */
+.chat-message-head strong {
+  letter-spacing: -0.01em;
+}
+
+.chat-message-assistant p + p,
+.chat-message-user p + p {
+  margin-top: 0.7rem;
+}
+
+.chat-message .list-clean {
+  display: grid;
+  gap: 0.42rem;
+  margin-top: 0.18rem;
+}
+
+.chat-message .list-clean li {
+  padding: 0.62rem 0.72rem;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.06);
+  color: #334155;
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.chat-message-user .list-clean li {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.chat-message-typing p {
+  font-style: italic;
+}

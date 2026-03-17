@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:ai": "node server/ollama-server.js",
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",

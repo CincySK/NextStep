@@ -17,9 +17,9 @@ function defaultWelcomeMessage() {
   return [{
     id: "welcome",
     role: "assistant",
-    text: "Hi, I am your NextStep Study Assistant. I can help with math, writing, concepts, worksheet screenshots, and handwritten steps. Tell me what you are working on.",
+    text: "Direct answer: I can help with math, concepts, writing, and assignment questions.\n\nExplanation: Ask your question directly, or upload a worksheet screenshot and I will work through it clearly.\n\nExample: Try 5/10, explain photosynthesis, or help me write an essay about space.",
     timestamp: new Date().toISOString(),
-    context: null,
+    context: { assistantTag: "AI Tutor" },
     attachments: []
   }];
 }
@@ -189,13 +189,15 @@ export default function ChatInterface({ initialClassId = "", initialAssignmentId
       const finalMessages = [...nextMessages, assistantMessage];
       setMessages(finalMessages);
       persistConversation(finalMessages);
-    } catch {
+    } catch (error) {
       const failMessage = {
         id: `assistant_error_${Date.now()}`,
         role: "assistant",
-        text: "I had trouble analyzing that request. Please try again or upload a clearer image/crop.",
+        text: error?.code === "OLLAMA_UNAVAILABLE"
+          ? "Direct answer: AI is not running locally. Please start Ollama.\n\nExplanation: Start the local Ollama app or run `ollama serve`, then try again. This Study Assistant now depends on your local model server."
+          : "Direct answer: I could not complete that request.\n\nExplanation: Try again, or upload a clearer image/crop if the question depends on the attachment.",
         timestamp: new Date().toISOString(),
-        context: null,
+        context: { assistantTag: error?.code === "OLLAMA_UNAVAILABLE" ? "Local AI Offline" : "AI Tutor" },
         attachments: []
       };
       const finalMessages = [...nextMessages, failMessage];
@@ -277,7 +279,7 @@ export default function ChatInterface({ initialClassId = "", initialAssignmentId
             {loading && (
               <article className="chat-message chat-message-assistant chat-message-typing">
                 <header className="chat-message-head">
-                  <strong>NextStep Tutor</strong>
+                  <strong>NextStep AI Tutor</strong>
                 </header>
                 <p>{loadingLabel}</p>
               </article>

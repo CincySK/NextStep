@@ -3,10 +3,10 @@ import { validateUploadFile } from "../documents/FileTypeDetector";
 import FileAttachmentPreview from "./FileAttachmentPreview";
 
 const suggestions = [
-  "simplify 6/8",
-  "explain photosynthesis",
-  "improve this sentence: I goed to the store",
-  "help with question 4a"
+  "Explain step-by-step",
+  "Give simpler explanation",
+  "Show example",
+  "Explain photosynthesis"
 ];
 
 function createAttachment(file) {
@@ -76,6 +76,23 @@ export default function ChatInput({
     });
   }
 
+  function applySuggestion(item) {
+    const trimmed = value.trim();
+    if (item === "Explain step-by-step") {
+      onChange(trimmed ? `${trimmed}\n\nPlease explain this step-by-step.` : "Please explain this step-by-step:");
+      return;
+    }
+    if (item === "Give simpler explanation") {
+      onChange(trimmed ? `${trimmed}\n\nPlease give a simpler explanation.` : "Please give a simpler explanation for:");
+      return;
+    }
+    if (item === "Show example") {
+      onChange(trimmed ? `${trimmed}\n\nPlease show one clear example.` : "Please show one clear example for:");
+      return;
+    }
+    onChange(item);
+  }
+
   return (
     <form className="chat-input-wrap" onSubmit={onSubmit}>
       <div className="chip-row">
@@ -84,7 +101,7 @@ export default function ChatInput({
             key={item}
             type="button"
             className="chip"
-            onClick={() => onChange(item)}
+            onClick={() => applySuggestion(item)}
           >
             {item}
           </button>
@@ -139,7 +156,7 @@ export default function ChatInput({
         Drag and drop worksheet images, screenshots, or scanned PDFs here.
       </div>
       <p className="chat-input-hint">
-        Try asking: simplify 6/8, explain photosynthesis, improve this sentence, or help with question 4a.
+        Try asking: 5/10, explain photosynthesis, help me write an essay about space, or help with question 4a.
       </p>
 
       <FileAttachmentPreview items={attachments} onRemove={removeAttachment} />
@@ -158,7 +175,7 @@ export default function ChatInput({
           type="submit"
           disabled={loading || (!value.trim() && !hasAttachments)}
         >
-          {loading ? "Analyzing..." : "Send"}
+          {loading ? "Thinking..." : "Send"}
         </button>
       </div>
     </form>

@@ -1,7 +1,6 @@
 import { analyzeVisualAttachment } from "./ImageUnderstandingService";
 import { buildAIContext } from "./ContextBuilder";
 import { buildMultimodalContext } from "./MultimodalPromptBuilder";
-import { routeLocalAssistant } from "../studyAssistant/studyAssistantRouter";
 
 function summarizeAttachments(multimodalContext) {
   if (!multimodalContext?.attachmentSummary?.length) return [];
@@ -23,6 +22,45 @@ function fallbackDiagramHelp(multimodalContext, context) {
       context?.assignmentTitle ? `I can also align this with your assignment: ${context.assignmentTitle}.` : ""
     ].filter(Boolean).join("\n"),
     assistantTag: "Diagram Help"
+  };
+}
+
+const LOCAL_AI_ENDPOINT = import.meta.env.VITE_AI_API_URL || "http://localhost:3001/api/chat";
+
+async function requestLocalTutor({ message, context, recentHistory, attachmentNotes }) {
+  const response = await fetch(LOCAL_AI_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message,
+      context,
+      recentHistory: recentHistory.map((item) => ({
+        role: item.role,
+        text: item.text,
+        context: item.context ?? null
+      })),
+      attachmentNotes
+    })
+  });
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    const error = new Error(data.error || "The local tutor request failed.");
+    error.code = response.status === 503 ? "OLLAMA_UNAVAILABLE" : "LOCAL_TUTOR_ERROR";
+    throw error;
+  }
+
+  return {
+    text: String(data.reply ?? "").trim(),
+    assistantTag: data.assistantTag || "AI Tutor"
   };
 }
 
@@ -58,17 +96,23 @@ export async function generateTutorReply({
     school,
     user
   });
+  const attachmentNotes = summarizeAttachments(multimodalContext);
+  let finalResponse;
 
-  const routed = routeLocalAssistant({
-    message,
-    recentHistory,
-    useClassContext,
-    context
-  });
-
-  const finalResponse = routed.assistantTag === "Clarification" && attachmentAnalyses.length > 0
-    ? fallbackDiagramHelp(multimodalContext, context)
-    : routed;
+  try {
+    finalResponse = await requestLocalTutor({
+      message,
+      context,
+      recentHistory,
+      attachmentNotes
+    });
+  } catch (error) {
+    if (attachmentAnalyses.length > 0 && error.code !== "OLLAMA_UNAVAILABLE") {
+      finalResponse = fallbackDiagramHelp(multimodalContext, context);
+    } else {
+      throw error;
+    }
+  }
 
   return {
     text: finalResponse.text,
@@ -76,7 +120,7 @@ export async function generateTutorReply({
       ...context,
       assistantTag: finalResponse.assistantTag,
       usedClassContext: Boolean(finalResponse.usedClassContext),
-      attachmentNotes: summarizeAttachments(multimodalContext),
+      attachmentNotes,
       multimodal: multimodalContext
     }
   };
