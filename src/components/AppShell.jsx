@@ -5,7 +5,6 @@ import { loadAppData } from "../storage";
 import { loadSchoolData } from "../classes/sharedSchoolStore";
 import { getCurrentUserId } from "../classes/schoolService";
 import UserMenu from "./auth/UserMenu";
-import logoSvg from "../assets/nextstep-logo-colored.svg?raw";
 
 function ShellIcon({ name }) {
   const icons = {
@@ -42,6 +41,17 @@ function ShellIcon({ name }) {
     <svg viewBox="0 0 24 24" aria-hidden="true" className="app-shell-icon">
       {icons[name] ?? icons.dashboard}
     </svg>
+  );
+}
+
+function BrandMark() {
+  return (
+    <span className="immersive-brand-mark" aria-hidden="true">
+      <span className="immersive-brand-mark-stem" />
+      <span className="immersive-brand-mark-curve immersive-brand-mark-curve-top" />
+      <span className="immersive-brand-mark-curve immersive-brand-mark-curve-bottom" />
+      <span className="immersive-brand-mark-dot" />
+    </span>
   );
 }
 
@@ -110,7 +120,7 @@ export default function AppShell({ children }) {
     <div className="immersive-shell">
       <aside className="immersive-sidebar">
         <NavLink to={isAuthenticated ? "/dashboard" : "/"} className="immersive-brand" aria-label="Go to NextStep home">
-          <span className="immersive-brand-logo" dangerouslySetInnerHTML={{ __html: logoSvg }} />
+          <BrandMark />
           <span className="immersive-brand-copy">
             <strong className="immersive-brand-title">NextStep</strong>
             <span className="immersive-brand-subtitle">No stops to success</span>
@@ -156,7 +166,7 @@ export default function AppShell({ children }) {
       <div className="immersive-main-column">
         <div className="immersive-mobile-brand">
           <NavLink to={isAuthenticated ? "/dashboard" : "/"} className="immersive-brand" aria-label="Go to NextStep home">
-            <span className="immersive-brand-logo" dangerouslySetInnerHTML={{ __html: logoSvg }} />
+            <BrandMark />
             <span className="immersive-brand-copy">
               <strong className="immersive-brand-title">NextStep</strong>
               <span className="immersive-brand-subtitle">No stops to success</span>
