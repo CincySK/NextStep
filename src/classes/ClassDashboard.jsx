@@ -8,25 +8,44 @@ export default function ClassDashboard({
   onRefresh
 }) {
   return (
-    <section className="section-card module-card">
-      <div className="section-header">
-        <div>
-          <h2>My Classes</h2>
-          <p className="intro-copy">
-            Join classes, review assignments, and open Study Assistant with assignment context.
+    <section className="module-page-shell">
+      <header className="module-hero module-hero-classes">
+        <div className="module-hero-copy">
+          <p className="quest-kicker">Classes hub</p>
+          <h1>Keep assignments, class context, and tutoring in one place.</h1>
+          <p className="quest-lead">
+            Join classes, review posted work, and launch the Study Assistant with the right assignment context when you need help.
           </p>
         </div>
-      </div>
+        <aside className="module-side-card">
+          <p className="quest-side-kicker">Snapshot</p>
+          <div className="rail-stat-grid">
+            <div className="rail-stat">
+              <strong>{enrolledClasses.length}</strong>
+              <span>Classes joined</span>
+            </div>
+            <div className="rail-stat">
+              <strong>{teachingClasses.length}</strong>
+              <span>Classes taught</span>
+            </div>
+          </div>
+        </aside>
+      </header>
 
-      <div className="dashboard-grid">
+      <div className="quest-grid-two">
         <JoinClass userId={userId} onJoined={onRefresh} />
 
-        <article className="mini-card">
-          <h3>Enrolled Classes</h3>
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Enrolled</p>
+              <h2>Your active classes</h2>
+            </div>
+          </div>
           {enrolledClasses.length === 0 ? (
             <p>No classes joined yet.</p>
           ) : (
-            <ul className="list-clean">
+            <ul className="list-clean list-clean-dark">
               {enrolledClasses.map((item) => (
                 <li key={item.classId}>
                   <Link className="user-link" to={`/classes/${item.classId}`}>
@@ -36,14 +55,19 @@ export default function ClassDashboard({
               ))}
             </ul>
           )}
-        </article>
+        </section>
 
-        <article className="mini-card">
-          <h3>Classes You Teach</h3>
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Teaching</p>
+              <h2>Classes you lead</h2>
+            </div>
+          </div>
           {teachingClasses.length === 0 ? (
             <p>You are not teaching any classes yet.</p>
           ) : (
-            <ul className="list-clean">
+            <ul className="list-clean list-clean-dark">
               {teachingClasses.map((item) => (
                 <li key={item.classId}>
                   <Link className="user-link" to={`/classes/${item.classId}`}>
@@ -54,7 +78,7 @@ export default function ClassDashboard({
               ))}
             </ul>
           )}
-        </article>
+        </section>
       </div>
     </section>
   );

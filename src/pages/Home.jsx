@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/useAuth";
-import FeatureCard from "../components/FeatureCard";
 import ProgressBadge from "../components/ProgressBadge";
 import { loadPersonalizationProfile } from "../personalization/personalizationStorage";
 import { loadAppData } from "../storage";
@@ -13,128 +12,164 @@ export default function Home() {
   const profile = loadPersonalizationProfile();
 
   const completedCount = useMemo(
-    () =>
-      Object.values(snapshot.progress).filter(Boolean).length,
+    () => Object.values(snapshot.progress).filter(Boolean).length,
     [snapshot.progress]
   );
-
-  const heroTitle = profile?.hero?.title ?? "Welcome to NextStep";
-  const heroBody = profile?.hero?.body ?? "Build clarity one lesson at a time. NextStep helps you explore careers, compare college environments, and practice real-world money decisions with guided feedback.";
-  const heroKicker = profile?.primaryPath
-    ? `Personalized for your ${profile.primaryPath} path`
-    : "Student Planning Platform";
-  const nextAction = profile?.suggestedNextActions?.[0] ?? "Finish one learning module and save one insight to your dashboard learning hub.";
-  const modeLabel = profile?.modeLabel ?? "Start your first pathway to unlock a personalized plan.";
-  const reasonWhy = profile?.reasonWhy ?? "";
-  const highlights = profile?.homeHighlights ?? [];
-
-  const featureOrder = profile?.primaryPath === "career"
-    ? ["career", "college", "money"]
-    : profile?.primaryPath === "college"
-      ? ["college", "career", "money"]
-      : profile?.primaryPath === "money"
-        ? ["money", "career", "college"]
-        : ["career", "college", "money"];
-
-  const featureConfig = {
-    career: {
-      title: "Career Path",
-      description: "Take a short strengths quiz and identify career clusters that match your interests.",
-      supportText: "Get role ideas, then save careers you want to research next.",
-      to: "/career"
-    },
-    college: {
-      title: "College Match",
-      description: "Answer campus and learning-style questions to discover sample college fits.",
-      supportText: "Use your results to build a focused college research list.",
-      to: "/college"
-    },
-    money: {
-      title: "Money Skills",
-      description: "Practice core financial literacy with short interactive exercises and feedback.",
-      supportText: "Learn budgeting, savings, and credit basics in student-friendly lessons.",
-      to: "/money"
-    }
-  };
-
-  const quickActionMap = {
-    "/career": { label: "Open Career Path", to: "/career" },
-    "/career/quiz": { label: "Take Career Quiz", to: "/career/quiz" },
-    "/college": { label: "Open College Match", to: "/college" },
-    "/college/quiz": { label: "Take College Quiz", to: "/college/quiz" },
-    "/money": { label: "Open Money Skills", to: "/money" },
-    "/dashboard": { label: "Go to Dashboard", to: "/dashboard" },
-    "/study-assistant": { label: "Open Study Assistant", to: "/study-assistant" },
-    "/classes": { label: "Open My Classes", to: "/classes" }
-  };
-
-  const quickActions = (profile?.quickLinks ?? ["/career", "/college", "/money"])
-    .map((path) => quickActionMap[path])
-    .filter(Boolean)
-    .slice(0, 3);
 
   if (isAuthenticated && userRole === "teacher") {
     return <Navigate to="/dashboard" replace />;
   }
 
+  const heroTitle = profile?.hero?.title ?? "Your future path starts here.";
+  const heroBody = profile?.hero?.body ?? "Build momentum with guided career exploration, college-fit planning, money confidence, and tutoring support that all stay in sync.";
+  const heroKicker = profile?.primaryPath ? `Focus path: ${profile.primaryPath}` : "NextStep mission control";
+  const nextAction = profile?.suggestedNextActions?.[0] ?? "Complete one module, save one insight, and keep your momentum moving.";
+  const modeLabel = profile?.modeLabel ?? "Your dashboard adapts as you explore.";
+  const reasonWhy = profile?.reasonWhy ?? "Every module you finish unlocks stronger recommendations and a clearer plan.";
+  const highlights = profile?.homeHighlights ?? [
+    { title: "Career planning", body: "Turn interests into realistic pathways and save careers worth researching." },
+    { title: "College fit", body: "Match your priorities to school environments and build a shortlist." },
+    { title: "Money confidence", body: "Practice budget, savings, and credit decisions with feedback." }
+  ];
+
+  const featureCards = [
+    {
+      title: "Career Path",
+      description: "Adaptive quiz, pathway research, and practical next steps.",
+      meta: snapshot.progress.careerComplete ? "Completed" : "Ready to start",
+      statusClass: snapshot.progress.careerComplete ? "status-complete" : "status-active",
+      to: "/career"
+    },
+    {
+      title: "College Match",
+      description: "Compare campus fit, support systems, and academic priorities.",
+      meta: snapshot.progress.collegeComplete ? "Completed" : "In progress",
+      statusClass: snapshot.progress.collegeComplete ? "status-complete" : "status-recommended",
+      to: "/college"
+    },
+    {
+      title: "Money Skills",
+      description: "Short, gamified exercises for budgeting, saving, and credit basics.",
+      meta: snapshot.progress.moneyComplete ? "Completed" : "Challenge available",
+      statusClass: snapshot.progress.moneyComplete ? "status-complete" : "status-locked",
+      to: "/money"
+    },
+    {
+      title: "Study Assistant",
+      description: "Use AI help for assignments, screenshots, writing, and concept review.",
+      meta: "Always available",
+      statusClass: "status-active",
+      to: "/study-assistant"
+    }
+  ];
+
+  const taskCards = [
+    { title: "Complete one module", body: "Finish one guided module to grow your personalized plan.", to: "/dashboard" },
+    { title: "Save one idea", body: `You have ${snapshot.favorites.length} saved items. Add one more from a quiz result.`, to: "/career" },
+    { title: "Open class support", body: "Join a class or open coursework with AI context.", to: "/classes" }
+  ];
+
   return (
-    <>
+    <section className="quest-dashboard-shell">
       {!isAuthenticated && isGuestMode && (
-        <section className="guest-reminder">
+        <section className="guest-reminder guest-reminder-dark">
           <p>You&apos;re exploring in guest mode. Create an account to save progress permanently.</p>
           <button className="primary-btn" onClick={() => navigate("/signup")}>Create Account</button>
         </section>
       )}
 
-      <section className={`hero card hero-accent-${profile?.accentMode ?? "default"}`}>
-        <div>
-          <p className="hero-kicker">{heroKicker}</p>
+      <header className="quest-hero">
+        <div className="quest-hero-copy">
+          <p className="quest-kicker">{heroKicker}</p>
           <h1>{heroTitle}</h1>
-          <p>{heroBody}</p>
-          <p className="hero-mode-label">{modeLabel}</p>
-          {reasonWhy && <p className="hero-why">{reasonWhy}</p>}
+          <p className="quest-lead">{heroBody}</p>
+          <p className="quest-subtle">{modeLabel}</p>
           <div className="badge-row">
-            <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} tone="default" />
-            <ProgressBadge label="Saved Favorites" value={snapshot.favorites.length} tone="default" />
+            <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} />
+            <ProgressBadge label="Saved Favorites" value={snapshot.favorites.length} />
+          </div>
+          <div className="cta-row">
+            <button className="primary-btn" onClick={() => navigate("/dashboard")}>Open Dashboard</button>
+            <button className="secondary-btn" onClick={() => navigate("/career")}>Start Exploring</button>
           </div>
         </div>
-        <div className="hero-panel">
-          <h3>Your Recommended Next Action</h3>
+        <aside className="quest-side-panel">
+          <p className="quest-side-kicker">Recommended next action</p>
+          <h3>Stay in motion</h3>
           <p>{nextAction}</p>
-          <div className="cta-row quick-links-row">
-            {quickActions.map((action) => (
-              <button key={action.to} className="secondary-btn" onClick={() => navigate(action.to)}>
-                {action.label}
+          <div className="quest-side-stack">
+            <div className="quest-mini-stat">
+              <strong>{completedCount}</strong>
+              <span>Modules cleared</span>
+            </div>
+            <div className="quest-mini-stat">
+              <strong>{snapshot.favorites.length}</strong>
+              <span>Saved ideas</span>
+            </div>
+          </div>
+          <p className="quest-side-reason">{reasonWhy}</p>
+        </aside>
+      </header>
+
+      <section className="pathway-panel">
+        <div className="panel-head">
+          <div>
+            <p className="quest-kicker">Pathways</p>
+            <h2>Choose your next track</h2>
+          </div>
+        </div>
+        <div className="pathway-grid">
+          {featureCards.map((card, index) => (
+            <button key={card.title} className="pathway-node-card" onClick={() => navigate(card.to)}>
+              <span className="pathway-node-order">0{index + 1}</span>
+              <div className="pathway-node-copy">
+                <div className="pathway-node-top">
+                  <h3>{card.title}</h3>
+                  <span className={`status-chip ${card.statusClass}`}>{card.meta}</span>
+                </div>
+                <p>{card.description}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div className="quest-grid-two">
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Daily goals</p>
+              <h2>Small wins that build momentum</h2>
+            </div>
+          </div>
+          <div className="task-card-grid">
+            {taskCards.map((task) => (
+              <button key={task.title} className="task-card" onClick={() => navigate(task.to)}>
+                <span className="task-chip">Quest</span>
+                <h3>{task.title}</h3>
+                <p>{task.body}</p>
               </button>
             ))}
           </div>
-        </div>
-      </section>
-
-      {highlights.length > 0 && (
-        <section className="dashboard-grid home-highlight-grid">
-          {highlights.map((item) => (
-            <article key={item.title} className="mini-card home-highlight-card">
-              <p className="context-label">Why this is featured</p>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-            </article>
-          ))}
         </section>
-      )}
 
-      <section className="feature-grid">
-        {featureOrder.map((key) => (
-          <FeatureCard
-            key={key}
-            title={featureConfig[key].title}
-            description={featureConfig[key].description}
-            supportText={featureConfig[key].supportText}
-            to={featureConfig[key].to}
-            onNavigate={navigate}
-          />
-        ))}
-      </section>
-    </>
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Why NextStep</p>
+              <h2>Modules working together</h2>
+            </div>
+          </div>
+          <div className="highlight-stack">
+            {highlights.map((item) => (
+              <article key={item.title} className="highlight-card-dark">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
   );
 }

@@ -6,7 +6,7 @@ export default function QuizNavigation({
   onNext
 }) {
   return (
-    <div className="quiz-nav">
+    <div className="quiz-nav quiz-nav-card">
       <button className="secondary-btn" onClick={onBack} disabled={!canGoBack}>
         Back
       </button>

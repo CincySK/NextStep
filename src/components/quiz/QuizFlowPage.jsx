@@ -166,14 +166,26 @@ export default function QuizFlowPage({ type }) {
   }
 
   return (
-    <section className="quiz-flow-shell">
-      <header className="quiz-flow-top">
-        <p className="quiz-flow-label">{meta.label}</p>
-        <h1>{meta.label}</h1>
-        <p>{meta.intro}</p>
-        <p className="quiz-meta">
-          Your progress is auto-saved. {resumeMeta.percent}% complete, last updated {resumeMeta.updatedAtText}.
-        </p>
+    <section className="quiz-flow-shell premium-quiz-shell">
+      <header className="quiz-flow-top premium-quiz-hero">
+        <div>
+          <p className="quiz-flow-label">{meta.label}</p>
+          <h1>{meta.label}</h1>
+          <p>{meta.intro}</p>
+          <p className="quiz-meta">
+            Your progress is auto-saved. {resumeMeta.percent}% complete, last updated {resumeMeta.updatedAtText}.
+          </p>
+        </div>
+        <aside className="premium-quiz-sidecard">
+          <p className="quiz-flow-label">Program guide</p>
+          <h3>{type === "career" ? "Adaptive career fit flow" : "College fit profile"}</h3>
+          <p>
+            {type === "career"
+              ? "This quiz builds from your priorities into tailored follow-up questions and grounded recommendations."
+              : "This flow helps you move from preferences to a college-fit summary you can act on."}
+          </p>
+          <span className="status-chip status-active">{resumeMeta.currentStep}/{resumeMeta.totalSteps} steps</span>
+        </aside>
       </header>
 
       {session.status === "in_progress" && currentQuestion && (
@@ -183,7 +195,7 @@ export default function QuizFlowPage({ type }) {
             totalSteps={resumeMeta.totalSteps}
             label="Question Progress"
           />
-          <div key={currentQuestion.id} className="quiz-stage">
+          <div key={currentQuestion.id} className="quiz-stage premium-quiz-stage">
             <QuestionCard question={currentQuestion} selectedValue={selectedValue} onSelect={handleSelect} />
           </div>
           <QuizNavigation
@@ -197,7 +209,7 @@ export default function QuizFlowPage({ type }) {
       )}
 
       {session.status === "review" && (
-        <section className="quiz-results-card">
+        <section className="quiz-results-card premium-review-shell">
           <p className="quiz-flow-label">Review Answers</p>
           <h2>Before You Submit</h2>
           <div className="quiz-review-list">
@@ -219,7 +231,7 @@ export default function QuizFlowPage({ type }) {
       )}
 
       {session.status === "complete" && session.result && (
-        <section className="quiz-results-card">
+        <section className="quiz-results-card premium-review-shell">
           <p className="quiz-flow-label">Quiz Complete</p>
           <h2>Nice work. Your personalized summary is ready.</h2>
           <p>You can view your results now and return to update answers anytime.</p>

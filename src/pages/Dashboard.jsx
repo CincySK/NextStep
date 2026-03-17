@@ -59,219 +59,50 @@ export default function Dashboard({ onRestartOnboarding }) {
     return Number.isNaN(parsed.getTime()) ? "Not available" : parsed.toLocaleString();
   }
 
-  const moduleBlocks = {
-    careerMatches: {
-      id: "careerMatches",
-      title: "Your Career Matches",
-      body: data.quizResults?.career
-        ? data.quizResults.career.narrative ?? data.quizResults.career.whyItFits
-        : "Take the Career Quiz to unlock your strongest role matches."
-    },
-    healthcarePathways: {
-      id: "healthcarePathways",
-      title: "Healthcare Pathways To Explore",
-      body: "Compare patient care, diagnostics, public health, and health-science tracks for fit."
-    },
-    stemPathways: {
-      id: "stemPathways",
-      title: "Technical Pathways",
-      body: "Explore software, data, and engineering paths with practical skill next steps."
-    },
-    creativePathways: {
-      id: "creativePathways",
-      title: "Creative Pathways",
-      body: "Review design, media, and storytelling careers and start building portfolio signals."
-    },
-    portfolioSteps: {
-      id: "portfolioSteps",
-      title: "Portfolio Builder",
-      body: "Choose one small project to demonstrate your skills this month."
-    },
-    relatedMajors: {
-      id: "relatedMajors",
-      title: "Majors To Explore",
-      body: data.quizResults?.career?.researchCards?.[0]?.relatedMajors?.join(", ") ?? "Complete Career Quiz to unlock major recommendations."
-    },
-    recommendedColleges: {
-      id: "recommendedColleges",
-      title: "Related Colleges",
-      body: "Run College Match to find campuses aligned with your pathway."
-    },
-    collegeFit: {
-      id: "collegeFit",
-      title: "Your College Fit Profile",
-      body: data.quizResults?.college?.whyItFits ?? "Complete College Match to generate your fit profile."
-    },
-    supportSystems: {
-      id: "supportSystems",
-      title: "Support Systems",
-      body: "Compare advising, mentoring, and first-year support across your shortlist."
-    },
-    schoolsToResearch: {
-      id: "schoolsToResearch",
-      title: "Schools To Research",
-      body: data.quizResults?.college?.topMatches?.slice(0, 3).join(", ") ?? "Save 3 colleges to begin a focused comparison."
-    },
-    admissionsPrep: {
-      id: "admissionsPrep",
-      title: "Admissions Prep",
-      body: "Track GPA trends, activity impact, and application milestones."
-    },
-    researchOpportunities: {
-      id: "researchOpportunities",
-      title: "Research + Internship Focus",
-      body: "Prioritize schools with strong labs, internship access, and outcomes data."
-    },
-    affordabilityPlan: {
-      id: "affordabilityPlan",
-      title: "Affordability Planner",
-      body: "Track in-state options, scholarships, aid deadlines, and value-fit schools."
-    },
-    moneyExercises: {
-      id: "moneyExercises",
-      title: "Next Money Exercise",
-      body: "Complete one guided money challenge to keep building confidence."
-    },
-    budgetConfidence: {
-      id: "budgetConfidence",
-      title: "Budget Confidence",
-      body: "Practice scenario-based decisions that balance needs, wants, and savings."
-    },
-    savingsHabit: {
-      id: "savingsHabit",
-      title: "Savings Habit",
-      body: "Set one small weekly target and track consistency."
-    },
-    goalTracking: {
-      id: "goalTracking",
-      title: "Goal Tracking",
-      body: "Turn savings goals into measurable weekly milestones."
-    },
-    creditBasics: {
-      id: "creditBasics",
-      title: "Credit Basics",
-      body: "Use quick checks to reinforce strong early credit habits."
-    },
-    futurePlanning: {
-      id: "futurePlanning",
-      title: "Future Planning Basics",
-      body: "Connect money decisions to your college and career goals."
-    },
-    skillBuilder: {
-      id: "skillBuilder",
-      title: "Skill Builder",
-      body: "Choose one new skill aligned with your top pathway this month."
-    },
-    studyAssistant: {
-      id: "studyAssistant",
-      title: "AI Study Assistant",
-      body: "Get step-by-step tutoring help for assignments, writing, and concept review."
-    },
-    myClasses: {
-      id: "myClasses",
-      title: "My Classes",
-      body: "Join classes with a code, review assignments, and open contextual help."
-    },
-    teacherWorkspace: {
-      id: "teacherWorkspace",
-      title: "Teacher Workspace",
-      body: "Create classes, upload materials, and power assignment-aware tutoring."
-    }
-  };
-
-  const featuredModuleCards = (profile?.featuredModules ?? [])
-    .map((id) => moduleBlocks[id])
-    .filter(Boolean)
-    .slice(0, 4);
-
-  const baseDashboardCards = [
-    {
-      id: "module_progress",
-      title: "Module Progress",
-      body: (
-        <ul className="list-clean">
-          <li>Career Path: {data.progress.careerComplete ? "Done" : "Pending"}</li>
-          <li>College Match: {data.progress.collegeComplete ? "Done" : "Pending"}</li>
-          <li>Money Skills: {data.progress.moneyComplete ? "Done" : "Pending"}</li>
-        </ul>
-      )
-    },
-    {
-      id: "latest_outcomes",
-      title: "Latest Outcomes",
-      body: (
-        <ul className="list-clean">
-          <li>Career: {data.scores.career ?? "-"}</li>
-          <li>College: {data.scores.college ?? "-"}</li>
-          <li>Money: {data.scores.money ?? "-"}</li>
-        </ul>
-      )
-    },
-    {
-      id: "saved_ideas",
-      title: "Saved Ideas",
-      body: data.favorites.length === 0 ? (
-        <p>No saved items yet. Add careers or colleges from your module results.</p>
-      ) : (
-        <ul className="list-clean">
-          {data.favorites.map((fav) => (
-            <li key={`${fav.type}-${fav.name}`} className="favorite-item">
-              <span>{fav.name} <small>({fav.type})</small></span>
-              <button className="mini-action" onClick={() => removeFavorite(fav)}>Remove</button>
-            </li>
-          ))}
-        </ul>
-      )
-    }
-  ];
-
-  const cardOrder = profile?.primaryPath === "career"
-    ? ["latest_outcomes", "module_progress", "saved_ideas"]
-    : profile?.primaryPath === "college"
-      ? ["latest_outcomes", "saved_ideas", "module_progress"]
-      : profile?.primaryPath === "money"
-        ? ["module_progress", "latest_outcomes", "saved_ideas"]
-        : ["module_progress", "latest_outcomes", "saved_ideas"];
-
-  const orderedDashboardCards = cardOrder
-    .map((id) => baseDashboardCards.find((card) => card.id === id))
-    .filter(Boolean);
-
   const displayName = user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "Alex";
   const firstName = String(displayName).split(" ")[0] || "Alex";
-  const welcomeTitle = `Welcome back, ${firstName}!`;
 
   const featureCards = [
     {
       id: "career",
       title: "Career Path Quiz",
       description: "Discover careers that match your interests and skills.",
-      image:
-        "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=1200&q=80",
-      icon: "CP",
-      iconClass: "dash-feature-icon-career",
-      to: "/career"
+      meta: data.progress.careerComplete ? "Completed" : "Recommended next",
+      image: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=1200&q=80",
+      to: "/career",
+      statusClass: data.progress.careerComplete ? "status-complete" : "status-recommended"
     },
     {
       id: "college",
       title: "College Match Quiz",
-      description: "Find the perfect colleges for your goals and preferences.",
-      image:
-        "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
-      icon: "CM",
-      iconClass: "dash-feature-icon-college",
-      to: "/college"
+      description: "Find colleges aligned with your goals, support needs, and environment fit.",
+      meta: data.progress.collegeComplete ? "Completed" : "In progress",
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
+      to: "/college",
+      statusClass: data.progress.collegeComplete ? "status-complete" : "status-active"
     },
     {
       id: "money",
       title: "Money Skills",
-      description: "Learn essential financial literacy and money management.",
-      image:
-        "https://images.unsplash.com/photo-1580048915913-4f8f5cb481c4?auto=format&fit=crop&w=1200&q=80",
-      icon: "MS",
-      iconClass: "dash-feature-icon-money",
-      to: "/money"
+      description: "Practice savings, spending, and credit basics through short lessons.",
+      meta: data.progress.moneyComplete ? "Completed" : "Challenge ready",
+      image: "https://images.unsplash.com/photo-1580048915913-4f8f5cb481c4?auto=format&fit=crop&w=1200&q=80",
+      to: "/money",
+      statusClass: data.progress.moneyComplete ? "status-complete" : "status-locked"
     }
+  ];
+
+  const modulePath = [
+    { label: "Career", complete: data.progress.careerComplete, to: "/career" },
+    { label: "College", complete: data.progress.collegeComplete, to: "/college" },
+    { label: "Money", complete: data.progress.moneyComplete, to: "/money" },
+    { label: "Assistant", complete: false, to: "/study-assistant" }
+  ];
+
+  const questCards = [
+    { title: "Open Study Assistant", body: "Get contextual help with writing, math, concepts, and assignments.", to: "/study-assistant" },
+    { title: "Review My Classes", body: "Check assignments, class context, and upcoming coursework.", to: "/classes" },
+    { title: "Restart onboarding", body: "Refresh your personalization signals and pathway priorities.", onClick: onRestartOnboarding }
   ];
 
   useEffect(() => {
@@ -284,106 +115,138 @@ export default function Dashboard({ onRestartOnboarding }) {
   }, [flash]);
 
   return (
-    <section className="dashboard-shell">
+    <section className="quest-dashboard-shell">
       {isGuestMode && (
-        <section className="guest-reminder">
+        <section className="guest-reminder guest-reminder-dark">
           <p>You&apos;re using guest mode. Create an account to permanently save progress.</p>
           <button className="primary-btn" onClick={() => navigate("/signup")}>Create Account</button>
         </section>
       )}
 
       {flash && (
-        <section className="flash-banner">
-          <p className="quiz-flow-label">Personalization Ready</p>
-          <h3>{flash.title ?? "Your personalized dashboard is now active."}</h3>
-          <p>NextStep rearranged your dashboard based on your first pathway and quiz results.</p>
+        <section className="flash-banner flash-banner-dark">
+          <p className="quiz-flow-label">Personalization ready</p>
+          <h3>{flash.title ?? "Your dashboard just leveled up."}</h3>
+          <p>NextStep reshaped your learning hub around your selected pathway and recent results.</p>
         </section>
       )}
 
-      <header className="dash-welcome">
-        <h1>{welcomeTitle}</h1>
-        <p>Ready to continue your learning journey?</p>
-      </header>
-
-      <section className="dash-feature-grid">
-        {featureCards.map((card) => (
-          <article
-            key={card.id}
-            className="dash-feature-card"
-            onClick={() => navigate(card.to)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") navigate(card.to);
-            }}
-          >
-            <img src={card.image} alt={card.title} className="dash-feature-image" />
-            <div className="dash-feature-content">
-              <span className={`dash-feature-icon ${card.iconClass}`}>{card.icon}</span>
-              <h3>{card.title}</h3>
-              <p>{card.description}</p>
-            </div>
-          </article>
-        ))}
-      </section>
-
-      <section className="dash-secondary-grid">
-        <article className="result-card">
-          <h3>Progress Overview</h3>
+      <header className="quest-hero dashboard-hero">
+        <div className="quest-hero-copy">
+          <p className="quest-kicker">Student command center</p>
+          <h1>Welcome back, {firstName}.</h1>
+          <p className="quest-lead">You&apos;re building a sharper plan across careers, colleges, money, and coursework support.</p>
           <div className="badge-row">
             <ProgressBadge label="Completed Modules" value={`${completedCount}/3`} />
             <ProgressBadge label="Saved Favorites" value={data.favorites.length} />
+            <ProgressBadge label="Career History" value={data.quizResults?.careerHistory?.length ?? 0} />
           </div>
-          <ul className="list-clean">
-            <li>Career Path: {data.progress.careerComplete ? "Done" : "Pending"}</li>
-            <li>College Match: {data.progress.collegeComplete ? "Done" : "Pending"}</li>
-            <li>Money Skills: {data.progress.moneyComplete ? "Done" : "Pending"}</li>
-          </ul>
-        </article>
-
-        <article className="result-card">
-          <h3>Quick Actions</h3>
           <div className="cta-row">
-            <button className="secondary-btn" onClick={() => navigate("/study-assistant")}>Open Study Assistant</button>
-            <button className="secondary-btn" onClick={() => navigate("/classes")}>Open My Classes</button>
-            {isAuthenticated && userRole === "teacher" && (
-              <button className="secondary-btn" onClick={() => navigate("/teacher")}>Teacher Dashboard</button>
-            )}
-            <button className="secondary-btn" onClick={onRestartOnboarding}>Restart Onboarding</button>
+            <button className="primary-btn" onClick={() => navigate("/career")}>Continue journey</button>
+            <button className="secondary-btn" onClick={() => navigate("/study-assistant")}>Ask the AI tutor</button>
           </div>
-          {(data.quizResults?.career || data.quizResults?.college) && (
-            <ul className="list-clean">
-              {data.quizResults?.career && (
-                <li>Career result updated: {formatTimestamp(data.quizResults.career.completedAt)}</li>
-              )}
-              {data.quizResults?.college && (
-                <li>College result updated: {formatTimestamp(data.quizResults.college.completedAt)}</li>
-              )}
-            </ul>
-          )}
-        </article>
+        </div>
+        <aside className="quest-side-panel">
+          <p className="quest-side-kicker">Current focus</p>
+          <h3>{profile?.primaryPath ? `${profile.primaryPath} pathway active` : "Pick your next move"}</h3>
+          <p>{profile?.reasonWhy ?? "Your actions here tune the platform toward what matters most to you."}</p>
+          <div className="path-progress-mini">
+            {modulePath.map((step, index) => (
+              <button key={step.label} className={`path-progress-dot ${step.complete ? "path-progress-dot-complete" : ""}`} onClick={() => navigate(step.to)}>
+                <span>{index + 1}</span>
+                <strong>{step.label}</strong>
+              </button>
+            ))}
+          </div>
+        </aside>
+      </header>
+
+      <section className="pathway-panel">
+        <div className="panel-head">
+          <div>
+            <p className="quest-kicker">Learning path</p>
+            <h2>Progressive modules</h2>
+          </div>
+        </div>
+        <div className="feature-module-grid">
+          {featureCards.map((card) => (
+            <article key={card.id} className="feature-module-card" onClick={() => navigate(card.to)} role="button" tabIndex={0} onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") navigate(card.to);
+            }}>
+              <img src={card.image} alt={card.title} className="feature-module-image" />
+              <div className="feature-module-body">
+                <div className="feature-module-top">
+                  <h3>{card.title}</h3>
+                  <span className={`status-chip ${card.statusClass}`}>{card.meta}</span>
+                </div>
+                <p>{card.description}</p>
+                <span className="feature-module-link">Open module</span>
+              </div>
+            </article>
+          ))}
+        </div>
       </section>
 
-      {suggestions.length > 0 && (
-        <section className="result-card">
-          <h3>Personalized Suggestions</h3>
-          <ul className="list-clean">
-            {suggestions.map((item) => (
-              <li key={item}>{item}</li>
+      <div className="quest-grid-two">
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Quests</p>
+              <h2>Daily momentum tasks</h2>
+            </div>
+          </div>
+          <div className="task-card-grid">
+            {questCards.map((task) => (
+              <button key={task.title} className="task-card" onClick={task.onClick ?? (() => navigate(task.to))}>
+                <span className="task-chip">Active</span>
+                <h3>{task.title}</h3>
+                <p>{task.body}</p>
+              </button>
             ))}
-          </ul>
+          </div>
         </section>
-      )}
 
-      {featuredModuleCards.length > 0 && (
-        <section className="result-card">
-          <h3>Featured For You</h3>
-          <div className="dashboard-grid">
-            {featuredModuleCards.map((item) => (
-              <article key={item.id} className="mini-card">
-                <p className="context-label">High relevance for your current mode</p>
-                <h4>{item.title}</h4>
-                <p>{item.body}</p>
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Live data</p>
+              <h2>Progress overview</h2>
+            </div>
+          </div>
+          <div className="rail-stat-grid dashboard-stat-grid">
+            <div className="rail-stat">
+              <strong>{data.scores.career ?? "-"}</strong>
+              <span>Career score</span>
+            </div>
+            <div className="rail-stat">
+              <strong>{data.scores.college ?? "-"}</strong>
+              <span>College score</span>
+            </div>
+            <div className="rail-stat">
+              <strong>{data.scores.money ?? "-"}</strong>
+              <span>Money score</span>
+            </div>
+            <div className="rail-stat">
+              <strong>{isAuthenticated && userRole === "teacher" ? "Teacher" : "Student"}</strong>
+              <span>Current role</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {suggestions.length > 0 && (
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Recommendations</p>
+              <h2>Personalized suggestions</h2>
+            </div>
+          </div>
+          <div className="highlight-stack">
+            {suggestions.map((item) => (
+              <article key={item} className="highlight-card-dark">
+                <h3>Suggested next step</h3>
+                <p>{item}</p>
               </article>
             ))}
           </div>
@@ -391,11 +254,16 @@ export default function Dashboard({ onRestartOnboarding }) {
       )}
 
       {data.favorites.length > 0 && (
-        <section className="result-card">
-          <h3>Saved Ideas</h3>
-          <ul className="list-clean">
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Saved</p>
+              <h2>Bookmarks and ideas</h2>
+            </div>
+          </div>
+          <ul className="list-clean list-clean-dark">
             {data.favorites.map((fav) => (
-              <li key={`${fav.type}-${fav.name}`} className="favorite-item">
+              <li key={`${fav.type}-${fav.name}`} className="favorite-item favorite-item-dark">
                 <span>{fav.name} <small>({fav.type})</small></span>
                 <button className="mini-action" onClick={() => removeFavorite(fav)}>Remove</button>
               </li>
@@ -405,9 +273,14 @@ export default function Dashboard({ onRestartOnboarding }) {
       )}
 
       {data.quizResults?.careerHistory?.length > 0 && (
-        <section className="result-card">
-          <h3>Career Exploration History</h3>
-          <ul className="list-clean">
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">History</p>
+              <h2>Career exploration log</h2>
+            </div>
+          </div>
+          <ul className="list-clean list-clean-dark">
             {data.quizResults.careerHistory.map((item) => (
               <li key={item.createdAt}>
                 {formatTimestamp(item.createdAt)}: Top themes around <strong>{item.topDomain}</strong> with paths like {item.topCareerTitles.slice(0, 2).join(", ")}.

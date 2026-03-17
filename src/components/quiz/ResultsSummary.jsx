@@ -1,14 +1,22 @@
 export default function ResultsSummary({ result, onStartOver, onGoDashboard, dashboardLabel = "Go to Dashboard" }) {
   return (
-    <section className="quiz-results-card">
-      <p className="quiz-flow-label">Personalized Summary</p>
-      <h2>{result.title}</h2>
-      <p>{result.whyItFits}</p>
+    <section className="quiz-results-card quiz-summary-shell">
+      <header className="quiz-summary-hero">
+        <div>
+          <p className="quiz-flow-label">Personalized Summary</p>
+          <h2>{result.title}</h2>
+          <p>{result.whyItFits}</p>
+        </div>
+        <div className="quiz-summary-side">
+          <span className="status-chip status-complete">Summary ready</span>
+          <p>Your results are saved and can shape what appears next across NextStep.</p>
+        </div>
+      </header>
       {result.recommendationExplanation && (
         <p className="feedback">{result.recommendationExplanation}</p>
       )}
 
-      <article className="result-block">
+      <article className="result-block result-block-elevated">
         <h3>Top Match Areas</h3>
         <ul className="list-clean">
           {result.topMatches.map((item) => (
@@ -18,7 +26,7 @@ export default function ResultsSummary({ result, onStartOver, onGoDashboard, das
       </article>
 
       {result.possibleMajors && (
-        <article className="result-block">
+        <article className="result-block result-block-elevated">
           <h3>Possible Majors</h3>
           <ul className="list-clean">
             {result.possibleMajors.map((major) => (
@@ -29,7 +37,7 @@ export default function ResultsSummary({ result, onStartOver, onGoDashboard, das
       )}
 
       {result.sampleCollegeNotes && (
-        <article className="result-block">
+        <article className="result-block result-block-elevated">
           <p className="mini-label">Your top priority: {result.whatMattersMost}</p>
           <h3>Sample College Fits</h3>
           <div className="recommend-grid">
@@ -44,7 +52,7 @@ export default function ResultsSummary({ result, onStartOver, onGoDashboard, das
       )}
 
       {result.supportingSignals && (
-        <article className="result-block">
+        <article className="result-block result-block-elevated">
           <h3>Strongest Signals From Your Answers</h3>
           <div className="chip-row">
             {result.supportingSignals.map((signal) => (
@@ -54,7 +62,7 @@ export default function ResultsSummary({ result, onStartOver, onGoDashboard, das
         </article>
       )}
 
-      <article className="result-block">
+      <article className="result-block result-block-elevated">
         <h3>Recommended Next Steps</h3>
         <ul className="list-clean">
           {result.nextSteps.map((step) => (

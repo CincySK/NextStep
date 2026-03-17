@@ -48,19 +48,38 @@ export default function TeacherDashboard({ teacherId }) {
   }
 
   return (
-    <section className="section-card module-card">
-      <div className="section-header">
-        <div>
-          <h2>Teacher Dashboard</h2>
-          <p className="intro-copy">
-            Create classes, upload assignments, and connect coursework to NextStep Study Assistant context.
+    <section className="module-page-shell">
+      <header className="module-hero module-hero-teacher">
+        <div className="module-hero-copy">
+          <p className="quest-kicker">Teacher workspace</p>
+          <h1>Run classes, assignments, and tutoring context from one control room.</h1>
+          <p className="quest-lead">
+            Create classes, upload materials, and connect coursework to the NextStep Study Assistant so students get more relevant support.
           </p>
         </div>
-      </div>
+        <aside className="module-side-card">
+          <p className="quest-side-kicker">Overview</p>
+          <div className="rail-stat-grid">
+            <div className="rail-stat">
+              <strong>{myClasses.length}</strong>
+              <span>Classes</span>
+            </div>
+            <div className="rail-stat">
+              <strong>{myClasses.reduce((sum, item) => sum + (item.assignmentIds?.length ?? 0), 0)}</strong>
+              <span>Assignments</span>
+            </div>
+          </div>
+        </aside>
+      </header>
 
-      <div className="dashboard-grid">
-        <article className="mini-card">
-          <h3>Create Class</h3>
+      <div className="quest-grid-two">
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Create</p>
+              <h2>Launch a new class</h2>
+            </div>
+          </div>
           <form className="auth-form" onSubmit={handleCreateClass}>
             <label className="field">
               Class name
@@ -92,14 +111,19 @@ export default function TeacherDashboard({ teacherId }) {
             {message && <p className="feedback">{message}</p>}
             <button className="primary-btn" type="submit">Create Class</button>
           </form>
-        </article>
+        </section>
 
-        <article className="mini-card">
-          <h3>My Classes</h3>
+        <section className="quest-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Manage</p>
+              <h2>My classes</h2>
+            </div>
+          </div>
           {myClasses.length === 0 ? (
             <p>No classes yet.</p>
           ) : (
-            <ul className="list-clean">
+            <ul className="list-clean list-clean-dark">
               {myClasses.map((item) => (
                 <li key={item.classId}>
                   <Link className="user-link" to={`/classes/${item.classId}`}>{item.className}</Link>
@@ -108,10 +132,10 @@ export default function TeacherDashboard({ teacherId }) {
               ))}
             </ul>
           )}
-        </article>
+        </section>
       </div>
 
-      <div className="dashboard-grid">
+      <div className="quest-grid-two">
         <AssignmentUploader teacherId={teacherId} classes={myClasses} onSaved={refreshSchool} />
         <StudentManager classList={myClasses} />
       </div>

@@ -129,64 +129,71 @@ export default function OnboardingContainer({ onComplete }) {
     <div className="onboarding-overlay" role="dialog" aria-modal="true" aria-label="NextStep onboarding">
       <div className="onboarding-shell">
         <OnboardingProgress currentStep={progressStep} totalSteps={steps.length} />
-        <div key={step.id} className="onboarding-stage">
-          {step.id === "welcome" && (
-            <section className="onboarding-step">
-              <h1>Welcome to NextStep</h1>
-              <p>NextStep helps you explore your future in careers, college planning, and life skills.</p>
-            </section>
-          )}
+        <div className="onboarding-stage-layout">
+          <aside className="onboarding-side-panel">
+            <p className="quiz-flow-label">Onboarding</p>
+            <h2>Set up your starting point.</h2>
+            <p>These quick signals help NextStep choose the right first experience and personalize what you see next.</p>
+          </aside>
+          <div key={step.id} className="onboarding-stage">
+            {step.id === "welcome" && (
+              <section className="onboarding-step">
+                <h1>Welcome to NextStep</h1>
+                <p>NextStep helps you explore your future in careers, college planning, and life skills.</p>
+              </section>
+            )}
 
-          {step.id === "primaryPath" && (
-            <OnboardingPathSelector selectedPath={selectedPath} onSelect={setSelectedPath} />
-          )}
+            {step.id === "primaryPath" && (
+              <OnboardingPathSelector selectedPath={selectedPath} onSelect={setSelectedPath} />
+            )}
 
-          {step.id === "ageGroup" && (
-            <section className="onboarding-step">
-              <h1>What age group are you in?</h1>
-              <div className="onboarding-options">
-                {ageOptions.map((option) => (
-                  <button
-                    type="button"
-                    key={option.value}
-                    className={`onboarding-option ${ageGroup === option.value ? "onboarding-option-selected" : ""}`}
-                    onClick={() => setAgeGroup(option.value)}
-                  >
-                    <span>{option.label}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
+            {step.id === "ageGroup" && (
+              <section className="onboarding-step">
+                <h1>What age group are you in?</h1>
+                <div className="onboarding-options">
+                  {ageOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.value}
+                      className={`onboarding-option ${ageGroup === option.value ? "onboarding-option-selected" : ""}`}
+                      onClick={() => setAgeGroup(option.value)}
+                    >
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {step.id === "interestAreas" && (
-            <section className="onboarding-step">
-              <h1>What topics interest you most?</h1>
-              <div className="onboarding-options onboarding-chips">
-                {interestOptions.map((option) => (
-                  <button
-                    type="button"
-                    key={option.value}
-                    className={`onboarding-option ${interests.includes(option.value) ? "onboarding-option-selected" : ""}`}
-                    onClick={() => {
-                      setInterests((prev) => prev.includes(option.value)
-                        ? prev.filter((value) => value !== option.value)
-                        : [...prev, option.value]);
-                    }}
-                  >
-                    <span>{option.label}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          )}
+            {step.id === "interestAreas" && (
+              <section className="onboarding-step">
+                <h1>What topics interest you most?</h1>
+                <div className="onboarding-options onboarding-chips">
+                  {interestOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.value}
+                      className={`onboarding-option ${interests.includes(option.value) ? "onboarding-option-selected" : ""}`}
+                      onClick={() => {
+                        setInterests((prev) => prev.includes(option.value)
+                          ? prev.filter((value) => value !== option.value)
+                          : [...prev, option.value]);
+                      }}
+                    >
+                      <span>{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            )}
 
-          {step.id === "startQuiz" && (
-            <section className="onboarding-step">
-              <h1>You&apos;re ready to start</h1>
-              <p>We&apos;ll guide you into your first quiz and personalize the experience as you go.</p>
-            </section>
-          )}
+            {step.id === "startQuiz" && (
+              <section className="onboarding-step">
+                <h1>You&apos;re ready to start</h1>
+                <p>We&apos;ll guide you into your first quiz and personalize the experience as you go.</p>
+              </section>
+            )}
+          </div>
         </div>
 
         <OnboardingNavigation

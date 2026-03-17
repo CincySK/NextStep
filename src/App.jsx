@@ -4,6 +4,7 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import RoleGuard from "./auth/RoleGuard";
 import StudentOnlyGate from "./auth/StudentOnlyGate";
 import Footer from "./components/Footer";
+import AppShell from "./components/AppShell";
 import Navbar from "./components/Navbar";
 import OnboardingContainer from "./components/onboarding/OnboardingContainer";
 import {
@@ -125,135 +126,147 @@ export default function App() {
     navigate(location.pathname, { replace: true, state: {} });
   }, [location.pathname, location.state, navigate]);
 
+  const routeTree = (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/career" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
+      <Route path="/career-path" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
+      <Route path="/career/quiz" element={<StudentOnlyGate><CareerQuiz /></StudentOnlyGate>} />
+      <Route path="/college" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
+      <Route path="/college-match" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
+      <Route path="/college/quiz" element={<StudentOnlyGate><CollegeQuiz /></StudentOnlyGate>} />
+      <Route path="/money" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
+      <Route path="/money-skills" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
+      <Route path="/auth/role" element={<RoleSelectionPage />} />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
+      <Route
+        path="/study-assistant"
+        element={(
+          <ProtectedRoute allowGuest>
+            <StudyAssistant />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/classes"
+        element={(
+          <ProtectedRoute>
+            <ClassesPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/classes/:classId"
+        element={(
+          <ProtectedRoute>
+            <ClassDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/class/:classId"
+        element={(
+          <ProtectedRoute>
+            <ClassDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/classes/:classId/assignments/:assignmentId"
+        element={(
+          <ProtectedRoute>
+            <AssignmentDetailPage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/teacher"
+        element={(
+          <ProtectedRoute>
+            <RoleGuard role="teacher">
+              <TeacherPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/teacher/dashboard"
+        element={(
+          <ProtectedRoute>
+            <RoleGuard role="teacher">
+              <TeacherPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/teacher/classes"
+        element={(
+          <ProtectedRoute>
+            <RoleGuard role="teacher">
+              <ClassesPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/teacher/upload"
+        element={(
+          <ProtectedRoute>
+            <RoleGuard role="teacher">
+              <TeacherPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/teacher/students"
+        element={(
+          <ProtectedRoute>
+            <RoleGuard role="teacher">
+              <TeacherPage />
+            </RoleGuard>
+          </ProtectedRoute>
+        )}
+      />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route
+        path="/dashboard"
+        element={(
+          <ProtectedRoute allowGuest>
+            <RoleAwareDashboard onRestartOnboarding={handleRestartOnboarding} />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/profile"
+        element={(
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        )}
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+
   return (
-    <div className="app-shell">
-      <Navbar />
-      <main className="container page-wrap">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/career" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
-          <Route path="/career-path" element={<StudentOnlyGate><CareerPath /></StudentOnlyGate>} />
-          <Route path="/career/quiz" element={<StudentOnlyGate><CareerQuiz /></StudentOnlyGate>} />
-          <Route path="/college" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
-          <Route path="/college-match" element={<StudentOnlyGate><CollegeMatch /></StudentOnlyGate>} />
-          <Route path="/college/quiz" element={<StudentOnlyGate><CollegeQuiz /></StudentOnlyGate>} />
-          <Route path="/money" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
-          <Route path="/money-skills" element={<StudentOnlyGate><MoneySkills /></StudentOnlyGate>} />
-          <Route path="/auth/role" element={<RoleSelectionPage />} />
-          <Route path="/auth/callback" element={<AuthCallbackPage />} />
-          <Route
-            path="/study-assistant"
-            element={(
-              <ProtectedRoute allowGuest>
-                <StudyAssistant />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/classes"
-            element={(
-              <ProtectedRoute>
-                <ClassesPage />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/classes/:classId"
-            element={(
-              <ProtectedRoute>
-                <ClassDetailPage />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/class/:classId"
-            element={(
-              <ProtectedRoute>
-                <ClassDetailPage />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/classes/:classId/assignments/:assignmentId"
-            element={(
-              <ProtectedRoute>
-                <AssignmentDetailPage />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/teacher"
-            element={(
-              <ProtectedRoute>
-                <RoleGuard role="teacher">
-                  <TeacherPage />
-                </RoleGuard>
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/teacher/dashboard"
-            element={(
-              <ProtectedRoute>
-                <RoleGuard role="teacher">
-                  <TeacherPage />
-                </RoleGuard>
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/teacher/classes"
-            element={(
-              <ProtectedRoute>
-                <RoleGuard role="teacher">
-                  <ClassesPage />
-                </RoleGuard>
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/teacher/upload"
-            element={(
-              <ProtectedRoute>
-                <RoleGuard role="teacher">
-                  <TeacherPage />
-                </RoleGuard>
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/teacher/students"
-            element={(
-              <ProtectedRoute>
-                <RoleGuard role="teacher">
-                  <TeacherPage />
-                </RoleGuard>
-              </ProtectedRoute>
-            )}
-          />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route
-            path="/dashboard"
-            element={(
-              <ProtectedRoute allowGuest>
-                <RoleAwareDashboard onRestartOnboarding={handleRestartOnboarding} />
-              </ProtectedRoute>
-            )}
-          />
-          <Route
-            path="/profile"
-            element={(
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            )}
-          />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-      <Footer />
+    <div className={`app-shell ${isAuthScreen ? "auth-layout-shell" : "immersive-layout-shell"}`}>
+      {isAuthScreen ? (
+        <>
+          <Navbar />
+          <main className="container page-wrap">
+            {routeTree}
+          </main>
+          <Footer />
+        </>
+      ) : (
+        <AppShell>
+          {routeTree}
+        </AppShell>
+      )}
       {showOnboarding && isAuthenticated && userRole !== "teacher" && !isAuthScreen && (
         <OnboardingContainer onComplete={handleOnboardingComplete} />
       )}

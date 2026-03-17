@@ -4,6 +4,7 @@ import { generateTutorReply } from "../ai/AIChatService";
 import { canAccessClass, getCurrentUserId } from "../classes/schoolService";
 import { loadSchoolData } from "../classes/sharedSchoolStore";
 import { loadAppData, updateAppData } from "../storage";
+import ProgressBadge from "../components/ProgressBadge";
 import AssignmentSelector from "./AssignmentSelector";
 import ChatInput from "./ChatInput";
 import ChatMessage from "./ChatMessage";
@@ -96,6 +97,11 @@ export default function ChatInterface({ initialClassId = "", initialAssignmentId
   const threadKey = useMemo(
     () => buildThreadKey(selectedClassId, selectedAssignmentId),
     [selectedAssignmentId, selectedClassId]
+  );
+
+  const conversationCount = useMemo(
+    () => Object.keys(loadAppData().studyAssistant?.conversationsByUser?.[userId] ?? {}).length,
+    [messages, userId]
   );
 
   useEffect(() => {
@@ -206,63 +212,91 @@ export default function ChatInterface({ initialClassId = "", initialAssignmentId
   }
 
   return (
-    <section className="section-card module-card study-assistant-shell">
-      <div className="section-header">
-        <div>
-          <h2>Study Assistant</h2>
-          <p className="intro-copy">
+    <section className="module-page-shell study-workspace-shell">
+      <header className="module-hero module-hero-assistant">
+        <div className="module-hero-copy">
+          <p className="quest-kicker">AI study assistant</p>
+          <h1>Work with a tutoring workspace, not a plain chat box.</h1>
+          <p className="quest-lead">
             Ask for help with assignments, concepts, writing, and test prep. Upload worksheet photos, handwritten math,
             screenshots, or scanned files for multimodal tutoring.
           </p>
+          <div className="badge-row">
+            <ProgressBadge label="Saved Threads" value={conversationCount} />
+            <ProgressBadge label="Classes Available" value={accessibleClasses.length} />
+          </div>
         </div>
-      </div>
-
-      <AssignmentSelector
-        classes={accessibleClasses}
-        assignmentsByClass={assignmentsByClass}
-        selectedClassId={selectedClassId}
-        selectedAssignmentId={selectedAssignmentId}
-        onClassChange={(value) => {
-          setSelectedClassId(value);
-          setSelectedAssignmentId("");
-        }}
-        onAssignmentChange={setSelectedAssignmentId}
-      />
-
-      <section className="chat-panel">
-        <div className="chat-history" aria-live="polite">
-          {messages.map((message) => (
-            <ChatMessage
-              key={message.id}
-              role={message.role}
-              text={message.text}
-              timestamp={message.timestamp}
-              context={message.context}
-              attachments={message.attachments ?? []}
-            />
-          ))}
-          {loading && (
-            <article className="chat-message chat-message-assistant chat-message-typing">
-              <header className="chat-message-head">
-                <strong>NextStep Tutor</strong>
-              </header>
-              <p>{loadingLabel}</p>
+        <aside className="module-side-card">
+          <p className="quest-side-kicker">Context controls</p>
+          <div className="highlight-stack">
+            <article className="highlight-card-dark">
+              <h3>Class-aware help</h3>
+              <p>Attach the right class and assignment so the tutor uses your actual coursework context.</p>
             </article>
-          )}
-          <div ref={messageEndRef} />
-        </div>
-        <ChatInput
-          value={input}
-          onChange={setInput}
-          onSubmit={handleSubmit}
-          loading={loading}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          useClassContext={useClassContext}
-          onToggleClassContext={setUseClassContext}
-          uploadError={uploadError}
-          setUploadError={setUploadError}
-        />
+            <article className="highlight-card-dark">
+              <h3>Image understanding</h3>
+              <p>Upload handwritten steps, worksheets, screenshots, and scanned files when text alone is not enough.</p>
+            </article>
+          </div>
+        </aside>
+      </header>
+
+      <section className="study-workspace-grid">
+        <aside className="quest-panel study-context-panel">
+          <div className="panel-head">
+            <div>
+              <p className="quest-kicker">Context</p>
+              <h2>Assignment source</h2>
+            </div>
+          </div>
+          <AssignmentSelector
+            classes={accessibleClasses}
+            assignmentsByClass={assignmentsByClass}
+            selectedClassId={selectedClassId}
+            selectedAssignmentId={selectedAssignmentId}
+            onClassChange={(value) => {
+              setSelectedClassId(value);
+              setSelectedAssignmentId("");
+            }}
+            onAssignmentChange={setSelectedAssignmentId}
+          />
+        </aside>
+
+        <section className="chat-panel">
+          <div className="chat-history" aria-live="polite">
+            {messages.map((message) => (
+              <ChatMessage
+                key={message.id}
+                role={message.role}
+                text={message.text}
+                timestamp={message.timestamp}
+                context={message.context}
+                attachments={message.attachments ?? []}
+              />
+            ))}
+            {loading && (
+              <article className="chat-message chat-message-assistant chat-message-typing">
+                <header className="chat-message-head">
+                  <strong>NextStep Tutor</strong>
+                </header>
+                <p>{loadingLabel}</p>
+              </article>
+            )}
+            <div ref={messageEndRef} />
+          </div>
+          <ChatInput
+            value={input}
+            onChange={setInput}
+            onSubmit={handleSubmit}
+            loading={loading}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            useClassContext={useClassContext}
+            onToggleClassContext={setUseClassContext}
+            uploadError={uploadError}
+            setUploadError={setUploadError}
+          />
+        </section>
       </section>
     </section>
   );

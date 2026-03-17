@@ -281,15 +281,23 @@ export default function CareerQuiz() {
     : [];
 
   return (
-    <section className={`quiz-flow-shell ${session.status === "results" ? "career-report-shell" : ""}`}>
-      <header className="quiz-flow-top">
-        <p className="quiz-flow-label">Career Exploration Quiz</p>
-        <h1>Career Exploration: Important Steps</h1>
-        <p>
-          We start with your interests, values, and strengths. Then we ask adaptive follow-up questions and build
-          grounded recommendations you can research and revisit over time.
-        </p>
-        <p className="quiz-meta">Progress is auto-saved. You can leave and resume anytime.</p>
+    <section className={`quiz-flow-shell premium-quiz-shell ${session.status === "results" ? "career-report-shell" : ""}`}>
+      <header className="quiz-flow-top premium-quiz-hero">
+        <div>
+          <p className="quiz-flow-label">Career Exploration Quiz</p>
+          <h1>Career Exploration: Important Steps</h1>
+          <p>
+            We start with your interests, values, and strengths. Then we ask adaptive follow-up questions and build
+            grounded recommendations you can research and revisit over time.
+          </p>
+          <p className="quiz-meta">Progress is auto-saved. You can leave and resume anytime.</p>
+        </div>
+        <aside className="premium-quiz-sidecard">
+          <p className="quiz-flow-label">Guided program</p>
+          <h3>Interest profile to career report</h3>
+          <p>This flow ends in a deeper career report, not just a single label. Answer carefully and compare recommendations before saving.</p>
+          <span className="status-chip status-active">{progressCurrent}/{progressTotal} steps</span>
+        </aside>
       </header>
 
       {session.status === "in_progress" && currentQuestion && (
@@ -299,9 +307,16 @@ export default function CareerQuiz() {
             totalSteps={progressTotal}
             label="Career Quiz Progress"
           />
-          <article key={currentQuestion.id} className="quiz-flow-card quiz-stage">
-            <p className="quiz-flow-label">Step {progressCurrent}</p>
-            <h2>{currentQuestion.title}</h2>
+          <article key={currentQuestion.id} className="quiz-flow-card quiz-stage quiz-question-card">
+            <div className="quiz-question-head">
+              <div>
+                <p className="quiz-flow-label">Step {progressCurrent}</p>
+                <h2>{currentQuestion.title}</h2>
+              </div>
+              {currentQuestion.kind === "choice" && (
+                <span className="status-chip status-recommended">{currentQuestion.options.length} options</span>
+              )}
+            </div>
             {currentQuestion.helper && <p className="intro-copy">{currentQuestion.helper}</p>}
             {currentQuestion.kind === "choice" && (
               <div className="quiz-choice-grid">
